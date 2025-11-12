@@ -1,6 +1,5 @@
 # ========================================
 # PROYECTO TFI - PROGRAMACIÓN 2 (UTN)
-# Entorno: Java + MySQL + DBeaver + Apache NetBeans
 # ========================================
 
 # ===== Compilación Java =====
@@ -25,10 +24,12 @@ replay_pid*
 /dist/
 /nbbuild/
 /nblibraries.properties
+build.xml
+manifest.mf
 
-# ===== DBeaver =====
-# Configuración de conexiones locales y backups
+# ===== DBeaver / Eclipse =====
 .dbeaver/
+.project  <-- AÑADIDO PARA IGNORAR EL ARCHIVO DE DBEAVER
 *.sql.bak
 *.sql~
 .workspace/
@@ -42,22 +43,9 @@ replay_pid*
 /target/
 /bin/
 
-# ===== macOS =====
+# ===== macOS / Windows =====
 .DS_Store
-.AppleDouble
-.LSOverride
-._*
-
-# ===== Windows =====
 Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# ===== Archivos comprimidos o empaquetados =====
-*.zip
-*.tar.gz
-*.rar
-*.7z
 
 # ========================================
 # ARCHIVOS DE CONFIGURACIÓN
@@ -67,9 +55,5 @@ Desktop.ini
 *.config
 *.properties
 
-# ...EXCEPTO el archivo de configuración de la BD, que es necesario
-# para la evaluación y reproducibilidad del proyecto.
+# ...EXCEPTO el archivo de configuración de la BD.
 !config.properties
-
-# Si tuvieras el config.properties en la carpeta 'resources', usarías:
-# !src/main/resources/config.properties
