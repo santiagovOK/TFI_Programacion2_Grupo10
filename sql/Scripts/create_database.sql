@@ -1,7 +1,7 @@
 -- -----------------------------------------------------
--- Script 1: CREACIÓN DE ESTRUCTURA
+-- CREACIÓN DE ESTRUCTURA
 -- TPI Programación 2 - UTN
--- Dominio: Empleado -> Legajo
+-- Dominio: Empleado -> Legajo (A->B)
 -- -----------------------------------------------------
 
 -- 1. CREACIÓN DE LA BASE DE DATOS
@@ -11,24 +11,8 @@ CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 USE tpi_prog2_empleados;
 
--- 2. CREACIÓN DE LA TABLA 'Legajo' (Clase B)
--- La creamos primero porque 'empleado' es la referencia.
-CREATE TABLE IF NOT EXISTS legajo (
-    id BIGINT NOT NULL AUTO_INCREMENT,
-    eliminado BOOLEAN NOT NULL DEFAULT FALSE,
-    nro_legajo VARCHAR(20) NOT NULL,
-    categoria VARCHAR(30),
-    estado ENUM('ACTIVO', 'INACTIVO') NOT NULL,
-    fecha_alta DATE,
-    observaciones VARCHAR(255),
-    
-    PRIMARY KEY (id),
-    UNIQUE INDEX uk_nro_legajo (nro_legajo ASC)
-) 
-ENGINE = InnoDB;
-
-
--- 3. CREACIÓN DE LA TABLA 'Empleado' (Clase A)
+-- 2. CREACIÓN DE LA TABLA Empleado (Clase A - Padre)
+-- Esta tabla se crea primero ya que es la entidad principal
 CREATE TABLE IF NOT EXISTS empleado (
     id BIGINT NOT NULL AUTO_INCREMENT,
     eliminado BOOLEAN NOT NULL DEFAULT FALSE,
@@ -39,21 +23,42 @@ CREATE TABLE IF NOT EXISTS empleado (
     fecha_ingreso DATE,
     area VARCHAR(50),
     
-    -- Esta es la clave foránea que implementa la relación 1-1
-    legajo_id BIGINT NOT NULL, 
+    PRIMARY KEY (id),
+    -- El DNI debe ser único en la organización.
+    UNIQUE INDEX uk_dni (dni ASC)
+)
+ENGINE = InnoDB;
+
+
+-- 3. CREACIÓN DE LA TABLA Legajo (Clase B - Hijo)
+-- Esta tabla se crea en segundo lugar, ya que depende de empleado
+CREATE TABLE IF NOT EXISTS legajo (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    eliminado BOOLEAN NOT NULL DEFAULT FALSE,
+    nro_legajo VARCHAR(20) NOT NULL,
+    categoria VARCHAR(30),
+    estado ENUM('ACTIVO', 'INACTIVO') NOT NULL,
+    fecha_alta DATE,
+    observaciones VARCHAR(255),
+    
+    -- Clave Foránea que implementa la relación
+    empleado_id BIGINT NOT NULL,
     
     PRIMARY KEY (id),
-    UNIQUE INDEX uk_dni (dni ASC),
+    -- El nro_legajo también debe ser único
+    UNIQUE INDEX uk_nro_legajo (nro_legajo ASC),
     
-    -- RESTRICCIÓN 1-1:
-    -- La FK legajo_id debe ser ÚNICA.
-    -- Esto garantiza que un Empleado solo puede tener un Legajo,
-    -- y un Legajo solo puede ser asignado a un Empleado.
-    UNIQUE INDEX uk_legajo_id (legajo_id ASC),
+    -- RESTRICCIÓN 1-1 (Requisito TPI):
+    -- La Clave Foránea empleado_id se define como ÚNICA
+    -- Esto garantiza que un Empleado solo puede tener un Legajo
+    UNIQUE INDEX uk_empleado_id (empleado_id ASC),
     
-    CONSTRAINT fk_empleado_legajo
-        FOREIGN KEY (legajo_id)
-        REFERENCES legajo (id)
+    -- Definición de la Clave Foránea
+    CONSTRAINT fk_legajo_empleado
+        FOREIGN KEY (empleado_id)
+        REFERENCES empleado (id)
+        -- ON DELETE CASCADE: Asegura que si se borra un Empleado (A),
+        -- su Legajo (B) asociado se borre automáticamente
         ON DELETE CASCADE
         ON UPDATE NO ACTION
 )
