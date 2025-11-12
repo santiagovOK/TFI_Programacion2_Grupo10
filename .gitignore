@@ -1,24 +1,75 @@
-# Compiled class file
+# ========================================
+# PROYECTO TFI - PROGRAMACIÓN 2 (UTN)
+# Entorno: Java + MySQL + DBeaver + Apache NetBeans
+# ========================================
+
+# ===== Compilación Java =====
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
 *.ear
+
+# ===== Logs y temporales =====
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+hs_err_pid*
+replay_pid*
+
+# ===== NetBeans =====
+/nbproject/private/
+/build/
+/dist/
+/nbbuild/
+/nblibraries.properties
+
+# ===== DBeaver =====
+# Configuración de conexiones locales y backups
+.dbeaver/
+*.sql.bak
+*.sql~
+.workspace/
+
+# ===== VS Code / Otros editores =====
+.vscode/
+.idea/
+*.iml
+/.settings/
+/out/
+/target/
+/bin/
+
+# ===== macOS =====
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ===== Windows =====
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===== Archivos comprimidos o empaquetados =====
 *.zip
 *.tar.gz
 *.rar
+*.7z
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# ========================================
+# ARCHIVOS DE CONFIGURACIÓN
+# ========================================
+# Ignorar todos los archivos de entorno y propiedades...
+*.env
+*.config
+*.properties
+
+# ...EXCEPTO el archivo de configuración de la BD, que es necesario
+# para la evaluación y reproducibilidad del proyecto.
+!config.properties
+
+# Si tuvieras el config.properties en la carpeta 'resources', usarías:
+# !src/main/resources/config.properties
