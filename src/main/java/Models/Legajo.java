@@ -4,7 +4,7 @@ package Models;
  * Entidad que representa un legajo en el sistema.
  * Hereda de Base para obtener id y eliminado.
  *
- * Relación con Persona:
+ * Relación con Empleado:
  * Asociación unidireccional 1 a 1. 
  * Empleado -> Legajo
  *
