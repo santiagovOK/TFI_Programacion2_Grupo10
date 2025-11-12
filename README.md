@@ -20,17 +20,21 @@
 ```
 📦 TFI_Programacion2_Grupo10
  ┣ 📂 src/
- ⤳ ┣ 📂 config/                # Conexión a la base de datos (DatabaseConnection)
- ⤳ ┣ 📂 entities/              # Clases Empleado y Legajo
- ⤳ ┣ 📂 dao/                   # Interfaces genéricas y DAOs concretos (EmpleadoDao, LegajoDao)
- ⤳ ┣ 📂 service/               # Lógica de negocio y manejo de transacciones
- ⤳ ┗ 📂 main/                  # Clase principal y menú de consola (AppMenu)
+ ┃ ┣ 📂 config/                # Conexión a la base de datos (DatabaseConnection)
+ ┃ ┣ 📂 entities/              # Clases Empleado y Legajo
+ ┃ ┣ 📂 dao/                   # Interfaces genéricas y DAOs concretos (EmpleadoDao, LegajoDao)
+ ┃ ┣ 📂 service/               # Lógica de negocio y manejo de transacciones
+ ┃ ┗ 📂 main/                  # Clase principal y menú de consola (AppMenu)
  ┣ 📂 sql/
- ⤳ ┣ create_database.sql       # Script de creación de la base y tablas
- ⤳ ┗ insert_data.sql           # Script con datos de prueba
- ┣ 📄 UML_Empleado_Legajo.pdf  # Diagrama UML del proyecto
- ┣ 📄 Informe_TFI_Grupo10.pdf  # Informe final con análisis y conclusiones
- ┗ 📄 README.md                # Archivo actual
+ ┃ ┣ create_database.sql       # Script de creación de la base y tablas
+ ┃ ┗ insert_data.sql           # Script con datos de prueba
+ ┣ 📂 lib/                     # Librerías externas (.jar) agregadas al proyecto desde NetBeans
+ ┣ 📂 img/                     # Diagramas y recursos visuales
+ ┃ ┗ 📄 UML_Empleado_Legajo.png # Diagrama UML del dominio Empleado-Legajo
+ ┣ 📄 config.properties         # Configuración de conexión MySQL (usuario, contraseña, URL)
+ ┣ 📄 Informe_TFI_Grupo10.pdf   # Informe final con análisis y conclusiones
+ ┣ 📄 .gitignore                # Exclusiones de archivos y carpetas
+ ┗ 📄 README.md                 # Archivo actual
 ```
 
 ---
@@ -157,3 +161,9 @@ El proyecto quedará listo para compilar y ejecutar correctamente desde el IDE.
    ```
 
 ---
+
+## 📊 Diagrama UML
+
+El siguiente diagrama UML representa la relación 1→1 entre las clases **Empleado (A)** y **Legajo (B)**, junto con sus principales atributos y la dirección de la asociación. 
+
+![Diagrama UML Empleado-Legajo](./img/UML_Empleado_Legajo.png)
