@@ -23,7 +23,7 @@ import java.util.List;
  * Esta clase maneja el LEFT JOIN con la tabla 'legajo' para
  * cargar la relación 1-a-1 (A->B) al leer Empleados.
  */
-public class EmpleadoDAO implements GenericDao<Empleado> {
+public class EmpleadoDAO implements GenericDAO<Empleado> {
 
     // --- QUERIES SQL (EMPLEADO) ---
 
@@ -264,7 +264,7 @@ public class EmpleadoDAO implements GenericDao<Empleado> {
     }
 
 
-    // --- MÉTODOS AUXILIARES (para cumplir con DRY en los métodos genéricos) ---
+    // --- MÉTODOS AUXILIARES (Helpers, para cumplir con DRY en los métodos genéricos) ---
 
     private void setEmpleadoParameters(PreparedStatement stmt, Empleado empleado) throws SQLException {
         stmt.setString(1, empleado.getNombre());

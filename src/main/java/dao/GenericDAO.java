@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @param <T> El tipo de la entidad (Empleado, Legajo).
  */
-public interface GenericDao<T> {
+public interface GenericDAO<T> {
 
     /**
      * Inserta una nueva entidad en la base de datos.
