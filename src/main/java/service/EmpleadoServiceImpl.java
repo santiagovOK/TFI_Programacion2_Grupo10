@@ -4,6 +4,8 @@ import dao.EmpleadoDAO;
 import entities.Empleado;
 import entities.Legajo;
 import config.DatabaseConnection;
+import config.TransactionManager;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -11,17 +13,24 @@ import java.util.List;
 /**
  * Implementación del servicio de negocio para la entidad Empleado. Capa
  * intermedia entre la UI y el DAO que aplica validaciones de negocio complejas.
- *
+ * <p>
  * Responsabilidades: - Validar datos de persona ANTES de persistir (......) -
  * Garantizar unicidad en el sistema (.....) - COORDINAR operaciones entre
  * Empleado y Legajo (transaccionales) - Proporcionar métodos de búsqueda
  * especializados - Implementar eliminación SEGURA de empleado/legajo (evita FKs
  * huérfanas)
- *
+ * <p>
  * Patrón: Service Layer con inyección de dependencias y coordinación de
  * servicios
  */
 public class EmpleadoServiceImpl implements GenericService<Empleado> {
+
+    private static final String TRANSACTION_SUCCESS_CREATE = "La transacción de creación fue un éxito.";
+    private static final String TRANSACTION_SUCCESS_UPDATE = "La transacción de actualización fue un éxito.";
+    private static final String TRANSACTION_SUCCESS_DELETE = "La transacción de eliminación fue un éxito.";
+    private static final String TRANSACTION_ERROR_CREATE = "Error en la transacción de creación.";
+    private static final String TRANSACTION_ERROR_UPDATE = "Error en la transacción de actualización.";
+    private static final String TRANSACTION_ERROR_DELETE = "Error en la transacción de eliminación.";
 
     /**
      * DAO para acceso a datos de empleados. Inyectado en el constructor
