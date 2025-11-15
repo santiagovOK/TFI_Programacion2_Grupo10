@@ -3,71 +3,119 @@ package config;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Administra el ciclo de vida de una transacción sobre una Connection.
+ */
 public class TransactionManager implements AutoCloseable {
-    private Connection conn;
+
+    private final Connection connection;
     private boolean transactionActive;
 
-    public TransactionManager(Connection conn) throws SQLException {
-        if (conn == null) {
+    /**
+     * Crea un nuevo administrador de transacciones para la conexión dada.
+     *
+     * @param connection conexión JDBC no nula.
+     * @throws IllegalArgumentException si la conexión es null.
+     */
+    public TransactionManager(Connection connection) {
+        if (connection == null) {
             throw new IllegalArgumentException("La conexión no puede ser null");
         }
-        this.conn = conn;
+        this.connection = connection;
         this.transactionActive = false;
     }
 
+    /**
+     * Devuelve la conexión subyacente administrada por este TransactionManager.
+     */
     public Connection getConnection() {
-        return conn;
+        return connection;
     }
 
+    /**
+     * Inicia una transacción deshabilitando el auto-commit.
+     *
+     * @throws SQLException si la conexión no está disponible o está cerrada.
+     */
     public void startTransaction() throws SQLException {
-        if (conn == null) {
-            throw new SQLException("No se puede iniciar la transacción: conexión no disponible");
-        }
-        if (conn.isClosed()) {
+        if (connection.isClosed()) {
             throw new SQLException("No se puede iniciar la transacción: conexión cerrada");
         }
-        conn.setAutoCommit(false);
+        connection.setAutoCommit(false);
         transactionActive = true;
     }
 
+    /**
+     * Hace commit de la transacción activa.
+     *
+     * @throws SQLException si no hay transacción activa o ocurre un error al hacer commit.
+     */
     public void commit() throws SQLException {
-        if (conn == null) {
-            throw new SQLException("Error al hacer commit: no hay conexión establecida");
-        }
         if (!transactionActive) {
             throw new SQLException("No hay una transacción activa para hacer commit");
         }
-        conn.commit();
-        transactionActive = false;
+        connection.commit();
+        resetTransactionState();
     }
 
+    /**
+     * Realiza un rollback de la transacción activa, si existe.
+     * <p>
+     * Cualquier excepción SQL se registra en stderr y no se propaga.
+     */
     public void rollback() {
-        if (conn != null && transactionActive) {
-            try {
-                conn.rollback();
-                transactionActive = false;
-            } catch (SQLException e) {
-                System.err.println("Error durante el rollback: " + e.getMessage());
-            }
+        if (!hasActiveTransaction()) {
+            return;
+        }
+
+        try {
+            connection.rollback();
+            resetTransactionState();
+        } catch (SQLException e) {
+            System.err.println("Error durante el rollback: " + e.getMessage());
         }
     }
 
+    /**
+     * Cierra el TransactionManager, intentando:
+     * <ul>
+     *     <li>Realizar rollback si hay una transacción activa.</li>
+     *     <li>Restaurar el auto-commit.</li>
+     *     <li>Cerrar la conexión.</li>
+     * </ul>
+     * Cualquier excepción SQL se registra en stderr y no se propaga.
+     */
     @Override
     public void close() {
-        if (conn != null) {
-            try {
-                if (transactionActive) {
-                    rollback();
-                }
-                conn.setAutoCommit(true);
-                conn.close();
-            } catch (SQLException e) {
-                System.err.println("Error al cerrar la conexión: " + e.getMessage());
+        try {
+            if (transactionActive) {
+                rollback();
             }
+            connection.setAutoCommit(true);
+            connection.close();
+        } catch (SQLException e) {
+            System.err.println("Error al cerrar la conexión: " + e.getMessage());
         }
     }
 
+    /**
+     * Indica si hay una transacción activa.
+     */
     public boolean isTransactionActive() {
         return transactionActive;
+    }
+
+    /**
+     * Indica si hay una transacción actualmente activa.
+     */
+    private boolean hasActiveTransaction() {
+        return transactionActive;
+    }
+
+    /**
+     * Resetea el estado interno de la transacción después de commit/rollback.
+     */
+    private void resetTransactionState() {
+        transactionActive = false;
     }
 }
