@@ -1,9 +1,13 @@
 package main;
 
 import entities.Empleado;
+import entities.EstadoLegajo;
+import entities.Legajo;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 import service.EmpleadoServiceImpl;
+import service.LegajoServiceImpl;
 
 /**
  * Controlador de las operaciones del menú (Menu Handler).
@@ -56,9 +60,72 @@ public class MenuHandler {
      * (Por ahora sin implementar).
      */
     public void crearEmpleado() {
-        throw new UnsupportedOperationException("Crear empleado aún no está implementado.");
+        try { 
+        System.out.println("== Crear empleado ==");
+         
+         System.out.print("Nombre: ");
+         String nombre = scanner.nextLine().trim();
+         System.out.print("Apellido: ");
+         String apellido = scanner.nextLine().trim();
+         System.out.print("DNI: ");
+         String dni = scanner.nextLine().trim();
+         System.out.print("Email: ");
+         String email = scanner.nextLine().trim();
+         System.out.print("Area: ");
+         String area = scanner.nextLine().trim();
+         System.out.print("Ingrese fecha de creación (AAAA-MM-DD): ");
+         LocalDate fechaIngreso = LocalDate.parse(scanner.nextLine());
+         
+                  
+         System.out.println("Datos de Legajo (se requiere crear legajo junto al empleado)");
+         
+         System.out.print("Numero de Legajo: ");
+         String numeroLegajo = scanner.nextLine().trim();
+         
+         EstadoLegajo estado = leerEstadoEmpleado();
+         
+         System.out.print("Categoria: ");
+         String categoria = scanner.nextLine().trim();
+         System.out.print("Observaciones: ");
+         String observaciones = scanner.nextLine().trim();
+         System.out.print("Ingrese fecha de creación (AAAA-MM-DD): ");
+         LocalDate fechaAlta = LocalDate.parse(scanner.nextLine());
+         
+         Legajo legajoNuevo = new Legajo(numeroLegajo, categoria,  estado,
+                  fechaAlta, observaciones);
+         Empleado empleadoNuevo = new Empleado(nombre, apellido, dni, email,fechaIngreso, area, legajoNuevo);
+         
+         empleadoService.insertar(empleadoNuevo);
+        }
+          catch (Exception e) {
+            System.err.println("Error al crear persona: " + e.getMessage());
+        }
+         
     }
 
+    
+    private EstadoLegajo leerEstadoEmpleado() {
+    while (true) {
+        System.out.println("Seleccione el estado del empleado:");
+        System.out.println("1 - ACTIVO");
+        System.out.println("2 - INACTIVO");
+        System.out.print("Opción: ");
+
+        String opcion = scanner.nextLine();
+
+        switch (opcion) {
+            case "1":
+                return EstadoLegajo.ACTIVO;
+            case "2":
+                return EstadoLegajo.INACTIVO;
+            default:
+                System.out.println("Opción inválida. Intente nuevamente.\n");
+        }
+    }
+}
+
+    
+    
     /**
      * Muestra los empleados activos.
      */
@@ -104,7 +171,20 @@ public class MenuHandler {
      * (Por ahora sin implementar).
      */
     public void buscarEmpleadoID() {
-        throw new UnsupportedOperationException("Buscar empleado por ID aún no está implementado.");
+        try {
+            System.out.println("== Buscar empleado por ID ==");
+            System.out.print("ID de la persona a eliminar: ");
+            int id = Integer.parseInt(scanner.nextLine());
+            Empleado empleado = empleadoService.getById(id);
+            if (empleado == null) {
+                System.out.println("Empleado no encontrado con ID: " + id);
+                return;
+            }
+            System.out.println("Empleado encontrado:");
+            System.out.println(empleado);
+        } catch (Exception e) {
+            System.err.println("ERROR al buscar empleado: " + e.getMessage());
+        }
     }
 
     /**
@@ -120,8 +200,7 @@ public class MenuHandler {
      * (Por ahora sin implementar).
      */
     public void listarLegajos() {
-        throw new UnsupportedOperationException("Listar legajos aún no está implementado.");
-    }
+        throw new UnsupportedOperationException("Actualizar legajo aún no está implementado.");
 
     /**
      * Opción de menú: actualizar legajo.
