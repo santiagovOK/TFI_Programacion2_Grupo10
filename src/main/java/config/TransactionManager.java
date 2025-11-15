@@ -8,6 +8,14 @@ import java.sql.SQLException;
  */
 public class TransactionManager implements AutoCloseable {
 
+    private static final String ERROR_CONNECTION_NULL = "La conexión no puede ser null";
+    private static final String ERROR_CLOSED_CONNECTION =
+            "No se puede iniciar la transacción: conexión cerrada";
+    private static final String ERROR_NO_ACTIVE_TRANSACTION =
+            "No hay una transacción activa para hacer commit";
+    private static final String ERROR_ROLLBACK = "Error durante el rollback: ";
+    private static final String ERROR_CLOSE_CONNECTION = "Error al cerrar la conexión: ";
+
     private final Connection connection;
     private boolean transactionActive;
 
