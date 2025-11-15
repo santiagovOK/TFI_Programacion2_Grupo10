@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package main;
 
 /**
@@ -17,48 +13,81 @@ package main;
  * IMPORTANTE: Esta clase NO lee entrada del usuario.
  * Solo muestra el menú. AppMenu es responsable de leer la opción.
  */
-public class MenuDisplay {
+public final class MenuDisplay {
+
+    private static final String MENU_HEADER = "\n========= MENU =========";
+
+    private static final String OPTION_1_CREAR_EMPLEADO = "1. Crear Empleado";
+    private static final String OPTION_2_LISTAR_EMPLEADOS = "2. Listar Empleados";
+    private static final String OPTION_3_ACTUALIZAR_EMPLEADO = "3. Actualizar empleado";
+    private static final String OPTION_4_ELIMINAR_EMPLEADO = "4. Eliminar empleado";
+    private static final String OPTION_5_BUSCAR_EMPLEADO_DNI = "5. Buscar empleado por DNI";
+
+    private static final String OPTION_6_CREAR_LEGAJO = "6. Crear Legajo";
+    private static final String OPTION_7_LISTAR_LEGAJOS = "7. Listar Legajo";
+    private static final String OPTION_8_ACTUALIZAR_LEGAJO = "8. Actualizar Legajo";
+    private static final String OPTION_9_ELIMINAR_LEGAJO = "9. Eliminar Legajo ";
+    private static final String OPTION_10_LISTAR_LEGAJOS_POR_ESTADO =
+            "10. Listar Legajo por Estado - ACTIVO - INACTIVO";
+
+    private static final String OPTION_0_SALIR = "0. Salir";
+    private static final String PROMPT_MESSAGE = "Ingrese una opcion: ";
+
     /**
-     * Muestra el menú principal con todas las opciones CRUD.
-     *
-     * Opciones de Empleado (1-5):
-     * 1. Crear Empleado: Permite crear persona con domicilio opcional
-     * 2. Listar Empleado: Lista todas o busca por nombre/apellido
-     * 3. Actualizar Empleado: Actualiza datos de Empleado
-     * 4. Eliminar Empleado: Soft delete de empleado
-     * 5. Buscar Empleado por Dni: Busca empleado por DNI
-     * 
-     * Opciones de Domicilios (6-10):
-     * 6. Crear Legajo: Crea Lejado
-     * 7. Listar Legajos: Lista todos los Legajos 
-     * 8. Actualizar Legajo por ID: Actualiza Legajo directamente 
-     * 9. Eliminar Legajo : Eliminacion Logica de Legajo
-     * 10. Listar Legajos por Estado : ACTIVO - INACTIVO
-     * 
-     *
-     * Opción de salida:
-     * 0. Salir: Termina la aplicación
-     *
-     * Formato:
-     * - Separador visual "========= MENU ========="
-     * - Lista numerada clara
-     * - Prompt "Ingrese una opcion: " sin salto de línea (espera input)
-     *
-     * Nota: Los números de opción corresponden al switch en AppMenu.processOption().
+     * Constructor privado para evitar la instanciación.
+     * Esta clase es puramente utilitaria.
+     */
+    private MenuDisplay() {
+        // Evita la instanciación
+    }
+
+    /**
+     * Muestra el menú principal escribiendo en {@link System#out}.
+     * Se mantiene por compatibilidad con el código existente.
      */
     public static void mostrarMenuPrincipal() {
-        System.out.println("\n========= MENU =========");
-        System.out.println("1. Crear Empleado");
-        System.out.println("2. Listar Empleados");
-        System.out.println("3. Actualizar empleado");
-        System.out.println("4. Eliminar empleado");
-        System.out.println("5. Buscar empleado por DNI");
-        System.out.println("6. Crear Legajo");
-        System.out.println("7. Listar Legajo");
-        System.out.println("8. Actualizar Legajo");
-        System.out.println("9. Eliminar Legajo ");
-        System.out.println("10. Listar Legajo por Estado - ACTIVO - INACTIVO");
-        System.out.println("0. Salir");
-        System.out.print("Ingrese una opcion: ");
+        mostrarMenuPrincipal(System.out);
+    }
+
+    /**
+     * Muestra el menú principal usando el {@link java.io.PrintStream} indicado.
+     * Permite redirigir la salida (por ejemplo, a tests o logs).
+     *
+     * @param out flujo de salida donde se imprimirá el menú
+     */
+    public static void mostrarMenuPrincipal(java.io.PrintStream out) {
+        printMenuHeader(out);
+        printEmpleadoOptions(out);
+        printLegajoOptions(out);
+        printExitOption(out);
+        printPrompt(out);
+    }
+
+    private static void printMenuHeader(java.io.PrintStream out) {
+        out.println(MENU_HEADER);
+    }
+
+    private static void printEmpleadoOptions(java.io.PrintStream out) {
+        out.println(OPTION_1_CREAR_EMPLEADO);
+        out.println(OPTION_2_LISTAR_EMPLEADOS);
+        out.println(OPTION_3_ACTUALIZAR_EMPLEADO);
+        out.println(OPTION_4_ELIMINAR_EMPLEADO);
+        out.println(OPTION_5_BUSCAR_EMPLEADO_DNI);
+    }
+
+    private static void printLegajoOptions(java.io.PrintStream out) {
+        out.println(OPTION_6_CREAR_LEGAJO);
+        out.println(OPTION_7_LISTAR_LEGAJOS);
+        out.println(OPTION_8_ACTUALIZAR_LEGAJO);
+        out.println(OPTION_9_ELIMINAR_LEGAJO);
+        out.println(OPTION_10_LISTAR_LEGAJOS_POR_ESTADO);
+    }
+
+    private static void printExitOption(java.io.PrintStream out) {
+        out.println(OPTION_0_SALIR);
+    }
+
+    private static void printPrompt(java.io.PrintStream out) {
+        out.print(PROMPT_MESSAGE);
     }
 }
