@@ -171,10 +171,9 @@ public class EmpleadoServiceImpl implements GenericService<Empleado> {
         if (empleado.getDni() == null || empleado.getDni().trim().isEmpty()) {
             throw new IllegalArgumentException("El DNI no puede estar vacío");
         }
-        
     }
 
-       private void validateDniUnique(String dni, Long empleadoId) throws Exception {
+    private void validateDniUnique(String dni, Long empleadoId) throws Exception {
         Empleado existente = empleadoDAO.buscarPorDni(dni);
         if (existente != null) {
             // Existe una persona con ese DNI
@@ -184,10 +183,5 @@ public class EmpleadoServiceImpl implements GenericService<Empleado> {
             }
             // Si llegamos aquí: es UPDATE y el DNI pertenece a la misma persona → OK
         }
-
-
-    }    /**
-     * 
-     */
-   
+    }
 }
