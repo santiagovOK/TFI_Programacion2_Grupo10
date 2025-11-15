@@ -48,13 +48,10 @@ public class AppMenu {
     }
 
     /**
-     * Muestra el menú principal, lee la opción del usuario y la convierte a int.
-     * Maneja internamente los errores de formato de número.
-     *
-     * @return La opción ingresada o null si la entrada fue inválida.
+     * Muestra el menú principal y lee la opción del usuario.
      */
     private Integer readMenuOption() {
-        MenuDisplay.mostrarMenuPrincipal();
+        MenuDisplay.mostrarMenuPrincipal(); // Asumimos que esta clase existe
         String input = scanner.nextLine();
         try {
             return Integer.parseInt(input);
@@ -65,50 +62,83 @@ public class AppMenu {
     }
 
     /**
-     * Procesa la opción seleccionada por el usuario y delega a MenuHandler.
-     *
-     * @param option Número de opción ingresado por el usuario
-     * @return true si el menú debe continuar, false si debe finalizar
+     * Procesa la opción del usuario y delega al MenuHandler.
      */
     private boolean handleMenuOption(int option) {
-        switch (option) {
-            case 1 -> menuHandler.crearEmpleado();
-            case 2 -> menuHandler.listarEmpleados();
-            case 3 -> menuHandler.actualizarEmpleado();
-            case 4 -> menuHandler.eliminarEmpleado();
-            case 5 -> menuHandler.buscarEmpleadoID();
-            case 6 -> menuHandler.crearLegajo();
-            case 7 -> menuHandler.listarLegajos();
-            case 8 -> menuHandler.actualizarLegajo();
-            case 9 -> menuHandler.eliminarLegajo();
-            case 10 -> menuHandler.listarLegajoPorEstado();
-            case EXIT_OPTION -> {
-                System.out.println(EXIT_MESSAGE);
-                return false;
-            }
-            default -> System.out.println(INVALID_OPTION_MESSAGE);
+        if (option == EXIT_OPTION) {
+            System.out.println(EXIT_MESSAGE);
+            return false;
         }
+
+        MenuAction action = switch (option) {
+            // Opciones de Empleado
+            case 1 -> () -> menuHandler.crearEmpleado();
+            case 2 -> () -> menuHandler.listarEmpleados();
+            case 3 -> () -> menuHandler.actualizarEmpleado();
+            case 4 -> () -> menuHandler.eliminarEmpleado();
+            case 5 -> () -> menuHandler.buscarEmpleadoID();
+
+            // Opciones de Legajo
+            case 6 -> () -> menuHandler.crearLegajo();
+            case 7 -> () -> menuHandler.listarLegajos();
+            case 8 -> () -> menuHandler.actualizarLegajo();
+            case 9 -> () -> menuHandler.eliminarLegajo();
+            case 10 -> () -> menuHandler.listarLegajoPorEstado();
+
+            default -> null;
+        };
+
+        if (action == null) {
+            System.out.println(INVALID_OPTION_MESSAGE);
+            return true;
+        }
+
+        executeMenuAction(action);
         return true;
     }
 
     /**
-     * Método que crea la cadena de dependencias.
-     * <p>
-     * Flujo de creación:
-     * 1- EmpleadoDAO → acceso a datos de empleados
-     * 2- LegajoDAO → acceso a datos de legajos
-     * 3- LegajoServiceImpl → usa LegajoDAO
-     * 4- EmpleadoServiceImpl → usa EmpleadoDAO y LegajoServiceImpl
-     *
-     * @return EmpleadoServiceImpl completamente inicializado
+     * Ejecuta una acción de menú y maneja de forma centralizada
+     * todos los tipos de errores y la pausa para el usuario.
      */
-    private EmpleadoServiceImpl createEmpleadoService() {
-        // 1. Creamos los DAOs (Data Access Objects)
-        EmpleadoDAO empleadoDAO = new EmpleadoDAO();
+    private void executeMenuAction(MenuAction action) {
+        try {
+            action.run();
+        } catch (UnsupportedOperationException e) {
+            System.err.println(BUSINESS_RULE_ERROR_PREFIX + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.err.println(DATA_ERROR_PREFIX + e.getMessage());
+        } catch (Exception e) {
+            System.err.println(UNEXPECTED_ERROR_PREFIX + e.getMessage());
+            e.printStackTrace();
+        }
+
+        System.out.println(PRESS_ENTER_TO_CONTINUE_MESSAGE);
+        scanner.nextLine();
+    }
+
+    /**
+     * Inicializa la cadena de dependencias (DAOs, Services, MenuHandler).
+     */
+    private MenuHandler initializeMenuHandler() {
+        // 1. DAOs (capa de datos)
         LegajoDAO legajoDAO = new LegajoDAO();
-        // 2. Creamos el servicio de Legajo
+        EmpleadoDAO empleadoDAO = new EmpleadoDAO();
+
+        // 2. Servicios (capa de negocio)
         LegajoServiceImpl legajoService = new LegajoServiceImpl(legajoDAO);
-        // 3. Creamos y retornamos el servicio de Empleado
-        return new EmpleadoServiceImpl(empleadoDAO, legajoService);
+        EmpleadoServiceImpl empleadoService = new EmpleadoServiceImpl(empleadoDAO, legajoService);
+
+        // 3. MenuHandler
+        return new MenuHandler(this.scanner, empleadoService, legajoService);
+    }
+
+    /**
+     * Interfaz funcional para representar cualquier acción del menú
+     * que pueda lanzar una excepción.
+     */
+    @FunctionalInterface
+    private interface MenuAction {
+        void run() throws Exception;
     }
 }
