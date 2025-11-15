@@ -56,161 +56,169 @@ public class LegajoServiceImpl implements GenericService<Legajo> {
         this.legajoDAO = legajoDAO;
     }
 
-    // Métodos
+    // --- Métodos de Negocio Transaccionales (Llamados por EmpleadoService) ---
 
-    
     /**
-     * MÉTODO OBLIGATORIO DE LA INTERFAZ.
-     * Implementamos este método, pero lanzamos un error, porque
-     * nuestra regla de negocio prohíbe crear un Legajo por sí solo.
-     * Siempre debe crearse DENTRO de la transacción de un Empleado.
+     * MÉTODO OBLIGATORIO DE LA INTERFAZ (GenericService).
+     * <p>
+     * Un Legajo no puede crearse por sí solo. Siempre debe crearse dentro de la
+     * transacción de un Empleado.
      */
     @Override
     public void insertar(Legajo legajo) throws Exception {
-        throw new UnsupportedOperationException("Operación no soportada. Un Legajo no puede crearse por sí solo.");
+        throw new UnsupportedOperationException(
+                "Operación no soportada. Un Legajo no puede crearse por sí solo."
+                        + " Debe crear un Empleado para que este método asigne el legajo."
+        );
     }
-   
+
     /**
      * Inserta un Legajo DENTRO de una transacción existente.
      * Este método es llamado por EmpleadoServiceImpl.
-     * Se validan las reglas de negocio de Legajo (incluyendo unicidad).
+     * Valida las reglas de negocio propias de Legajo (incluyendo unicidad).
      */
     public void insertarTx(Legajo legajo, long empleadoId, Connection conn) throws Exception {
-        
-        validateLegajo(legajo); // Valida las reglas del negocio
-
-        // Valida la unicidad
-        if (legajoDAO.buscarPorNroLegajo(legajo.getNumeroLegajo()) != null) {
-            throw new IllegalArgumentException("Error: El número de legajo ya existe.");
-        }
-
+        validateLegajoData(legajo);
+        validateNumeroLegajoUniqueForInsert(legajo);
         legajoDAO.crearTx(legajo, empleadoId, conn);
     }
 
-    //  Método que valida las reglas de negocio para crear, actualizar un nuevo legajo
-    private void validateLegajo(Legajo legajo) {
-        
-        // Validación de Nulidad (Objeto)
-        if (legajo == null) {
-            throw new IllegalArgumentException("El legajo no puede ser null");
-        }
-
-        // VALIDACIONES DE CAMPOS "NOT NULL"
-
-        if (legajo.getNumeroLegajo() == null || legajo.getNumeroLegajo().trim().isEmpty()) {
-            throw new IllegalArgumentException("El número de legajo no puede estar vacío");
-        }
-
-        if (legajo.getEstado() == null) {
-            throw new IllegalArgumentException("El Estado del Legajo no puede ser null");
-        }
-
-
-        // VALIDACIONES DE LONGITUD (varchar)
-
-        if (legajo.getNumeroLegajo().trim().length() > 20) {
-            throw new IllegalArgumentException("El número de legajo no puede exceder los 20 caracteres");
-        }
-
-        if (legajo.getCategoria() != null && legajo.getCategoria().length() > 30) {
-            throw new IllegalArgumentException("La categoría no puede exceder los 30 caracteres");
-        }
-
-        if (legajo.getObservaciones() != null && legajo.getObservaciones().length() > 255) {
-            throw new IllegalArgumentException("Las observaciones no pueden exceder los 255 caracteres");
-        }
-        
-    }
-    
-    @Override
-    public void actualizar(Legajo legajo) throws Exception {
-       if (legajo == null || legajo.getId() <= 0) {
-            throw new IllegalArgumentException("El legajo a actualizar no puede ser null y debe tener un ID válido.");
-        }
-       validateLegajo(legajo); // Reutilizamos el metodo de validación
-       
-       // Validamos la unicidad
-       Legajo legajoExiste = legajoDAO.buscarPorNroLegajo(legajo.getNumeroLegajo());
-       if (legajoExiste != null && legajoExiste.getId() != legajo.getId()) {
-            throw new IllegalArgumentException("Error: Número de legajo ya existe");
-        }
-       
-       legajoDAO.actualizar(legajo); 
-
-    }
-    
-    
     /**
-     * Actualiza un Legajo DENTRO de una transacción existente
-     * Método propio de esta clase
+     * Actualiza un Legajo DENTRO de una transacción existente.
+     * Este método es llamado por EmpleadoServiceImpl.
      */
     public void actualizarTx(Legajo legajo, Connection conn) throws Exception {
-        if (legajo == null || legajo.getId() <= 0) {
-            throw new IllegalArgumentException("El legajo a actualizar no puede ser null y debe tener un ID válido.");
-        }
-
-        validateLegajo(legajo); 
-
-        Legajo legajoExistente = legajoDAO.buscarPorNroLegajo(legajo.getNumeroLegajo());
-        if (legajoExistente != null && legajoExistente.getId() != legajo.getId()) {
-            throw new IllegalArgumentException("Error: El número de legajo ya existe");
-        }
-
+        validateLegajoForUpdate(legajo);
+        validateLegajoData(legajo);
+        validateNumeroLegajoUniqueForUpdate(legajo);
         legajoDAO.actualizarTx(legajo, conn);
     }
 
-        /**
-        * Para ser usado en EmpleadoServiceImpl.
-        * La operación de borrado (lógico o físico) siempre se inicia desde el Empleado.
-        */
-    @Override
-        public void eliminar(long id) throws Exception {
-            if (id <= 0) {
-                throw new IllegalArgumentException("El ID para eliminar debe ser mayor a 0.");
-            }
-
-            Legajo legajo = legajoDAO.leer(id);
-            if (legajo == null) { 
-                throw new IllegalArgumentException("El legajo no existe");
-            }
-            
-            legajoDAO.eliminar(id);
-        }
-    
     /**
-     * Realiza la baja lógica DENTRO de una transacción existente.
-     * Este método PROPIO es llamado por EmpleadoServiceImpl.
+     * Realiza la baja lógica de un Legajo DENTRO de una transacción existente.
+     * Este método es llamado por EmpleadoServiceImpl.
      */
     public void eliminarTx(long id, Connection conn) throws Exception {
-        if (id <= 0) {
-            throw new IllegalArgumentException("El ID para eliminar debe ser mayor a 0.");
-        }
+        validateLegajoId(id);
         legajoDAO.eliminarTx(id, conn);
-    }    
-        
+    }
+
+    // --- Métodos Públicos (Usados por el Menú) ---
+
+    @Override
+    public void actualizar(Legajo legajo) throws Exception {
+        validateLegajoForUpdate(legajo);
+        validateLegajoData(legajo);
+        validateNumeroLegajoUniqueForUpdate(legajo);
+        legajoDAO.actualizar(legajo);
+    }
+
     /**
-     * Llama al médoto leer en LegajoDAO
-     * @param id
-     * @return La fila a un objeto Legao o Null si no se encontró
-     * @throws Exception 
+     * MÉTODO OBLIGATORIO DE LA INTERFAZ (GenericService).
+     * <p>
+     * Prohibimos que un legajo se borre por sí solo, ya que eso
+     * dejaría a un Empleado "huérfano" (sin legajo).
+     */
+    @Override
+    public void eliminar(long id) throws Exception {
+        throw new UnsupportedOperationException(
+                "Operación no soportada. Un Legajo no puede eliminarse por sí solo. "
+                        + "Debe eliminar el Empleado asociado (ID: " + id + ")"
+        );
+    }
+
+    /**
+     * Llama al método leer en LegajoDAO.
+     * Usado para buscar un legajo individualmente.
      */
     @Override
     public Legajo getById(long id) throws Exception {
-        if (id <= 0) {
-            throw new IllegalArgumentException("El ID debe ser mayor a 0");
+        validateLegajoId(id);
+        Legajo legajo = legajoDAO.leer(id);
+        if (legajo == null) {
+            throw new IllegalArgumentException(ERROR_LEGAJO_NO_EXISTE);
         }
-        return legajoDAO.leer(id);
+        return legajo;
     }
-      
-    
+
     /**
-     * Llama al método leerTodos en LegajoDAO
-     * @return lista de legajos
-     * @throws Exception 
+     * Llama al método leerTodos en LegajoDAO.
+     * Usado para listar todos los legajos.
      */
     @Override
     public List<Legajo> getAll() throws Exception {
         return legajoDAO.leerTodos();
     }
-    
+
+    // --- Métodos Privados de Validación ---
+
+    /**
+     * Valida todas las reglas de negocio de un Legajo relacionadas con sus datos
+     * (campos obligatorios, longitudes, etc.).
+     */
+    private void validateLegajoData(Legajo legajo) {
+        if (legajo == null) {
+            throw new IllegalArgumentException(ERROR_LEGAJO_NULL);
+        }
+
+        if (legajo.getNumeroLegajo() == null || legajo.getNumeroLegajo().trim().isEmpty()) {
+            throw new IllegalArgumentException(ERROR_NUMERO_LEGAJO_VACIO);
+        }
+
+        if (legajo.getEstado() == null) {
+            throw new IllegalArgumentException(ERROR_ESTADO_NULL);
+        }
+
+        String nroLegajoTrim = legajo.getNumeroLegajo().trim();
+        if (nroLegajoTrim.length() > NUMERO_LEGAJO_MAX_LENGTH) {
+            throw new IllegalArgumentException(ERROR_NUMERO_LEGAJO_LARGO);
+        }
+
+        if (legajo.getCategoria() != null && legajo.getCategoria().length() > CATEGORIA_MAX_LENGTH) {
+            throw new IllegalArgumentException(ERROR_CATEGORIA_LARGA);
+        }
+
+        if (legajo.getObservaciones() != null && legajo.getObservaciones().length() > OBSERVACIONES_MAX_LENGTH) {
+            throw new IllegalArgumentException(ERROR_OBSERVACIONES_LARGAS);
+        }
+    }
+
+    /**
+     * Valida que el ID de un legajo sea válido (> 0).
+     */
+    private void validateLegajoId(long id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException(ERROR_ID_INVALIDO);
+        }
+    }
+
+    /**
+     * Valida que un legajo sea apto para actualización (objeto no nulo y con ID válido).
+     */
+    private void validateLegajoForUpdate(Legajo legajo) {
+        if (legajo == null || legajo.getId() <= 0) {
+            throw new IllegalArgumentException("El legajo a actualizar no puede ser null y debe tener un ID válido.");
+        }
+    }
+
+    /**
+     * Valida la unicidad del número de legajo para operaciones de inserción.
+     */
+    private void validateNumeroLegajoUniqueForInsert(Legajo legajo) throws Exception {
+        Legajo existente = legajoDAO.buscarPorNroLegajo(legajo.getNumeroLegajo());
+        if (existente != null) {
+            throw new IllegalArgumentException(ERROR_NUMERO_LEGAJO_DUPLICADO);
+        }
+    }
+
+    /**
+     * Valida la unicidad del número de legajo para operaciones de actualización,
+     * ignorando el propio legajo.
+     */
+    private void validateNumeroLegajoUniqueForUpdate(Legajo legajo) throws Exception {
+        Legajo legajoExistente = legajoDAO.buscarPorNroLegajo(legajo.getNumeroLegajo());
+        if (legajoExistente != null && legajoExistente.getId() != legajo.getId()) {
+            throw new IllegalArgumentException(ERROR_NUMERO_LEGAJO_DUPLICADO_OTRO);
+        }
+    }
 }
