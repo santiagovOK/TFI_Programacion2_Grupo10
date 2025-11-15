@@ -1,16 +1,18 @@
 package main;
+
 import java.util.Scanner;
+
 import dao.EmpleadoDAO;
 import dao.LegajoDAO;
 import service.EmpleadoServiceImpl;
 import service.LegajoServiceImpl;
 
-// ... existing code ...
-
 public class AppMenu {
 
     private static final int EXIT_OPTION = 0;
     private static final String INVALID_INPUT_MESSAGE = "Entrada invalida. Por favor, ingrese un número.";
+    private static final String INVALID_OPTION_MESSAGE = "Opción no válida.";
+    private static final String EXIT_MESSAGE = "Saliendo...";
 
     /**
      * Scanner único compartido por toda la aplicación. IMPORTANTE: Solo debe
@@ -18,33 +20,25 @@ public class AppMenu {
      * problemas de buffering de entrada.
      */
     private final Scanner scanner;
+
     /**
      * Handler que ejecuta las operaciones del menú. Contiene toda la lógica de
      * interacción con el usuario.
      */
     private final MenuHandler menuHandler;
-    /**
-     * Flag que controla el loop principal del menú. Se setea a false cuando el
-     * usuario selecciona "0 - Salir".
-     */
-    private boolean running;
-
-    // ... existing code ...
 
     public AppMenu() {
         this.scanner = new Scanner(System.in);
         EmpleadoServiceImpl empleadoService = createEmpleadoService();
         this.menuHandler = new MenuHandler(scanner, empleadoService);
-        this.running = true;
     }
 
-    // ... existing code ...
-
     public void run() {
-        while (running) {
-            Integer opcion = readMenuOption();
-            if (opcion != null) {
-                handleMenuOption(opcion);
+        boolean keepRunning = true;
+        while (keepRunning) {
+            Integer option = readMenuOption();
+            if (option != null) {
+                keepRunning = handleMenuOption(option);
             }
         }
         scanner.close();
@@ -70,45 +64,38 @@ public class AppMenu {
     /**
      * Procesa la opción seleccionada por el usuario y delega a MenuHandler.
      *
-     * @param opcion Número de opción ingresado por el usuario
+     * @param option Número de opción ingresado por el usuario
+     * @return true si el menú debe continuar, false si debe finalizar
      */
-    private void handleMenuOption(int opcion) {
-        switch (opcion) {
-            case 1 ->
-                    menuHandler.crearEmpleado();
-            case 2 ->
-                    menuHandler.listarEmpleados();
-            case 3 ->
-                    menuHandler.actualizarEmpleado();
-            case 4 ->
-                    menuHandler.eliminarEmpleado();
-            case 5 ->
-                    menuHandler.buscarEmpleadoID();
-            case 6 ->
-                    menuHandler.crearLegajo();
-            case 7 ->
-                    menuHandler.listarLegajos();
-            case 8 ->
-                    menuHandler.actualizarLegajo();
-            case 9 ->
-                    menuHandler.eliminarLegajo();
-            case 10 ->
-                    menuHandler.listarLegajoPorEstado();
+    private boolean handleMenuOption(int option) {
+        switch (option) {
+            case 1 -> menuHandler.crearEmpleado();
+            case 2 -> menuHandler.listarEmpleados();
+            case 3 -> menuHandler.actualizarEmpleado();
+            case 4 -> menuHandler.eliminarEmpleado();
+            case 5 -> menuHandler.buscarEmpleadoID();
+            case 6 -> menuHandler.crearLegajo();
+            case 7 -> menuHandler.listarLegajos();
+            case 8 -> menuHandler.actualizarLegajo();
+            case 9 -> menuHandler.eliminarLegajo();
+            case 10 -> menuHandler.listarLegajoPorEstado();
             case EXIT_OPTION -> {
-                System.out.println("Saliendo...");
-                running = false;
+                System.out.println(EXIT_MESSAGE);
+                return false;
             }
-            default ->
-                    System.out.println("Opción no valida.");
+            default -> System.out.println(INVALID_OPTION_MESSAGE);
         }
+        return true;
     }
 
     /**
-     * método que crea la cadena de dependencias
-     *
-     * Flujo de creación: 1- EmpleadoDAO → ccceso a datos de empleados 2-
-     * LegajoDAO → ccceso a datos de legajos 3- LegajoServiceImpl → usa
-     * LegajoDAO 4- EmpleadoServiceImpl → usa EmpleadoDAO y LegajoServiceImpl
+     * Método que crea la cadena de dependencias.
+     * <p>
+     * Flujo de creación:
+     * 1- EmpleadoDAO → acceso a datos de empleados
+     * 2- LegajoDAO → acceso a datos de legajos
+     * 3- LegajoServiceImpl → usa LegajoDAO
+     * 4- EmpleadoServiceImpl → usa EmpleadoDAO y LegajoServiceImpl
      *
      * @return EmpleadoServiceImpl completamente inicializado
      */
