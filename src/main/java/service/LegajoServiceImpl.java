@@ -2,33 +2,52 @@ package service;
 
 import dao.LegajoDAO;
 import entities.Legajo;
+
 import java.sql.Connection;
 import java.util.List;
 
 /**
  * Implementación del servicio de negocio para la entidad Legajo.
  * Capa intermedia entre la UI y el DAO que aplica validaciones de negocio.
- *
+ * <p>
  * Responsabilidades:
  * - Validar que los datos del legajo sean correctos ANTES de persistir
  * - Aplicar reglas de negocio
  * - Delegar operaciones de BD al DAO
  * - Transformar excepciones técnicas en errores de negocio comprensibles
- *
+ * <p>
  * Patrón: Service Layer con inyección de dependencias
  */
 public class LegajoServiceImpl implements GenericService<Legajo> {
+
+    private static final int NUMERO_LEGAJO_MAX_LENGTH = 20;
+    private static final int CATEGORIA_MAX_LENGTH = 30;
+    private static final int OBSERVACIONES_MAX_LENGTH = 255;
+
+    private static final String ERROR_ID_INVALIDO = "El ID debe ser mayor a 0.";
+    private static final String ERROR_LEGAJO_NULL = "El legajo no puede ser null";
+    private static final String ERROR_LEGAJO_NO_EXISTE = "El legajo no existe";
+    private static final String ERROR_NUMERO_LEGAJO_VACIO = "El número de legajo no puede estar vacío";
+    private static final String ERROR_ESTADO_NULL = "El Estado del Legajo no puede ser null";
+    private static final String ERROR_NUMERO_LEGAJO_LARGO =
+            "El número de legajo no puede exceder los " + NUMERO_LEGAJO_MAX_LENGTH + " caracteres";
+    private static final String ERROR_CATEGORIA_LARGA =
+            "La categoría no puede exceder los " + CATEGORIA_MAX_LENGTH + " caracteres";
+    private static final String ERROR_OBSERVACIONES_LARGAS =
+            "Las observaciones no pueden exceder los " + OBSERVACIONES_MAX_LENGTH + " caracteres";
+    private static final String ERROR_NUMERO_LEGAJO_DUPLICADO = "Error: El número de legajo ya existe.";
+    private static final String ERROR_NUMERO_LEGAJO_DUPLICADO_OTRO =
+            "Error: El número de legajo ya existe y pertenece a otra persona.";
+
     /**
-     * DAO para acceso a datos de domicilios.
+     * DAO para acceso a datos de legajos.
      * Inyectado en el constructor (Dependency Injection).
-     * Usa GenericDAO para permitir testing con mocks.
      */
     private final LegajoDAO legajoDAO;
 
     /**
-     * Constructor con inyección de dependencias
-     * Valida que el DAO no sea null
-     * @param legajoDAO 
+     * Constructor con inyección de dependencias.
+     * Valida que el DAO no sea null.
      */
     public LegajoServiceImpl(LegajoDAO legajoDAO) {
         if (legajoDAO == null) {
