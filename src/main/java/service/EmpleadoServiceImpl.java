@@ -2,6 +2,10 @@ package service;
 
 import dao.EmpleadoDAO;
 import entities.Empleado;
+import entities.Legajo;
+import config.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -41,32 +45,164 @@ public class EmpleadoServiceImpl implements GenericService<Empleado> {
     }
 
     @Override
-     public void insertar(Empleado empleado) throws Exception {
+    public void insertar(Empleado empleado) throws Exception {
         validateEmpleado(empleado);
         validateDniUnique(empleado.getDni(), null);
 
-       
-        if (empleado.getLegajo() != null) {
-            if (empleado.getLegajo().getId() == 0) {
-                
-                legajoService.insertar(empleado.getLegajo());
-            } else {
-                
-               legajoService.actualizar(empleado.getLegajo());
+        if (empleado.getLegajo() == null) {
+            throw new IllegalArgumentException("Un Empleado debe ser creado con un Legajo.");
+        }
+        // CÓDIGO ANTERIOR
+        //if (empleado.getLegajo() != null) {
+        //    if (empleado.getLegajo().getId() == 0) {
+        //        
+        //        legajoService.insertar(empleado.getLegajo());
+        //    } else {
+        //        
+        //       legajoService.actualizar(empleado.getLegajo());
+        //    }
+        //}
+        //empleadoDAO.crear(empleado);
+
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false); // Se inicia la transacción
+            
+            empleadoDAO.crearTx(empleado, conn); // 1ro creamos el emplado con un nuevo ID
+            if (empleado.getId() == 0) {
+                throw new SQLException("No se pudo crear el empleado");
+            }
+            
+            Legajo legajo = empleado.getLegajo(); // 2do creamos el legajo para el empleado
+            legajoService.insertarTx(legajo, empleado.getId(), conn);
+            
+            conn.commit(); // Hacemos commit confirmando la transacción
+            System.out.println("La transacción fue un éxito");
+        } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    System.err.println("Error en la transacción.");
+                    conn.rollback(); // Hace rollback si algo falla
+                } catch (SQLException ex) { // Si falla el rollback
+                    System.err.println("Error: " + ex.getMessage());
+                }
+            }
+            throw new Exception("Error al crear empleado: ".concat(e.getMessage()), e);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true); // Vuelve al autocommit
+                    conn.close(); // Cierra la conexión
+                } catch (SQLException e) {
+                    System.err.println("Error al cerrar la conexión: " + e.getMessage());
+                }
             }
         }
 
-        empleadoDAO.crear(empleado);
+    }
+    
+    @Override
+    public void actualizar(Empleado empleado) throws Exception {
+        
+        // VALIDACIONES de las reglas de negocio
+        if (empleado == null || empleado.getId() <= 0) {
+            throw new IllegalArgumentException("El empleado a actualizar no puede ser null y debe tener un ID.");
+        }
+        if (empleado.getLegajo() == null || empleado.getLegajo().getId() <= 0) {
+            throw new IllegalArgumentException("El empleado debe tener un legajo asociado con ID para actualizar.");
+        }
+        
+        validateEmpleado(empleado); // Valida Nombre, Apellido, DNI
+        validateDniUnique(empleado.getDni(), empleado.getId()); // Para que la validación de DNI no falle consigo mismo
+
+        // TRANSACCIÓN
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false); // Pasamos a manual e iniciamos transacción
+
+            legajoService.actualizarTx(empleado.getLegajo(), conn); // Actualiza legajo
+            empleadoDAO.actualizarTx(empleado, conn); // Actualiza empleado
+
+            conn.commit(); // Confirma los cambios
+            System.out.println("La transacción fue un éxito.");
+
+        } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    System.err.println("Error en la transacción de actualización. Iniciando rollback...");
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    System.err.println("Error grave: no se pudo hacer rollback. " + ex.getMessage());
+                }
+            }
+            throw new Exception("Error al actualizar empleado: ".concat(e.getMessage()), e);
+
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    System.err.println("Error al cerrar la conexión: " + e.getMessage());
+                }
+            }
+        }
     }
 
-    @Override
-    public void actualizar(Empleado entidad) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 
     @Override
     public void eliminar(long id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        // VALIDACIONES
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID para eliminar debe ser mayor a 0.");
+        }
+
+        // Buscamos al empleado para asegurarnos de que existe y obtener el ID de su legajo.
+        Empleado empleado = empleadoDAO.leer(id);
+        if (empleado == null) {
+            throw new IllegalArgumentException("No se encontró un empleado (activo) con el ID: " + id);
+        }
+        if (empleado.getLegajo() == null) {
+             throw new IllegalStateException("Error de datos: El empleado " + id + " no tiene un legajo asociado.");
+        }
+        
+        long legajoId = empleado.getLegajo().getId();
+
+        // TRANSACCIÓN
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false);  // Pasamos a manual e iniciamos transacción
+
+            legajoService.eliminarTx(legajoId, conn); // Primero se elimina el Legajo (Por la relación Empleado -> Legajo)
+            empleadoDAO.eliminarTx(id, conn); // En segundo lugar se elimina a Empleado
+
+            conn.commit(); // Confirmamos cambios
+            System.out.println("Empleado y su Legajo eliminados");
+
+        } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    System.err.println("Error en la transacción de eliminación. Iniciando rollback...");
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    System.err.println("Error grave: no se pudo hacer rollback. " + ex.getMessage());
+                }
+            }
+            throw new Exception("Error al eliminar empleado: ".concat(e.getMessage()), e);
+
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    System.err.println("Error al cerrar la conexión: " + e.getMessage());
+                }
+            }
+        }
     }
 
     @Override
@@ -98,7 +234,7 @@ public class EmpleadoServiceImpl implements GenericService<Empleado> {
         
     }
 
-       private void validateDniUnique(String dni, Integer empleadoId) throws Exception {
+       private void validateDniUnique(String dni, Long empleadoId) throws Exception {
         Empleado existente = empleadoDAO.buscarPorDni(dni);
         if (existente != null) {
             // Existe una persona con ese DNI

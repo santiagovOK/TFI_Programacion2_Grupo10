@@ -1,7 +1,8 @@
 package service;
 
-import dao.GenericDAO;
+import dao.LegajoDAO;
 import entities.Legajo;
+import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -22,14 +23,14 @@ public class LegajoServiceImpl implements GenericService<Legajo> {
      * Inyectado en el constructor (Dependency Injection).
      * Usa GenericDAO para permitir testing con mocks.
      */
-    private final GenericDAO<Legajo> legajoDAO;
+    private final LegajoDAO legajoDAO;
 
     /**
-     *  Constructor con inyección de dependencias
+     * Constructor con inyección de dependencias
      * Valida que el DAO no sea null
      * @param legajoDAO 
      */
-    public LegajoServiceImpl(GenericDAO legajoDAO) {
+    public LegajoServiceImpl(LegajoDAO legajoDAO) {
         if (legajoDAO == null) {
             throw new IllegalArgumentException("LegajoDAO no puede ser null");
         }
@@ -37,13 +38,37 @@ public class LegajoServiceImpl implements GenericService<Legajo> {
     }
 
     // Métodos
+
+    
+    /**
+     * MÉTODO OBLIGATORIO DE LA INTERFAZ.
+     * Implementamos este método, pero lanzamos un error, porque
+     * nuestra regla de negocio prohíbe crear un Legajo por sí solo.
+     * Siempre debe crearse DENTRO de la transacción de un Empleado.
+     */
     @Override
     public void insertar(Legajo legajo) throws Exception {
-        validateLegajo(legajo); 
-        legajoDAO.crear(legajo);
+        throw new UnsupportedOperationException("Operación no soportada. Un Legajo no puede crearse por sí solo.");
+    }
+   
+    /**
+     * Inserta un Legajo DENTRO de una transacción existente.
+     * Este método es llamado por EmpleadoServiceImpl.
+     * Se validan las reglas de negocio de Legajo (incluyendo unicidad).
+     */
+    public void insertarTx(Legajo legajo, long empleadoId, Connection conn) throws Exception {
+        
+        validateLegajo(legajo); // Valida las reglas del negocio
+
+        // Valida la unicidad
+        if (legajoDAO.buscarPorNroLegajo(legajo.getNumeroLegajo()) != null) {
+            throw new IllegalArgumentException("Error: El número de legajo ya existe.");
+        }
+
+        legajoDAO.crearTx(legajo, empleadoId, conn);
     }
 
-    //  Método que valida las reglas de negocio para crear un nuevo legajo
+    //  Método que valida las reglas de negocio para crear, actualizar un nuevo legajo
     private void validateLegajo(Legajo legajo) {
         
         // Validación de Nulidad (Objeto)
@@ -75,22 +100,75 @@ public class LegajoServiceImpl implements GenericService<Legajo> {
         if (legajo.getObservaciones() != null && legajo.getObservaciones().length() > 255) {
             throw new IllegalArgumentException("Las observaciones no pueden exceder los 255 caracteres");
         }
-
-        // --- 4. VALIDACIÓN DE UNICIDAD (Regla de Negocio) ---
-
         
     }
     
     @Override
-    public void actualizar(Legajo entidad) throws Exception {
+    public void actualizar(Legajo legajo) throws Exception {
+       if (legajo == null || legajo.getId() <= 0) {
+            throw new IllegalArgumentException("El legajo a actualizar no puede ser null y debe tener un ID válido.");
+        }
+       validateLegajo(legajo); // Reutilizamos el metodo de validación
        
-    }
+       // Validamos la unicidad
+       Legajo legajoExiste = legajoDAO.buscarPorNroLegajo(legajo.getNumeroLegajo());
+       if (legajoExiste != null && legajoExiste.getId() != legajo.getId()) {
+            throw new IllegalArgumentException("Error: Número de legajo ya existe");
+        }
+       
+       legajoDAO.actualizar(legajo); 
 
-    @Override
-    public void eliminar(long id) throws Exception {
-       
     }
     
+    
+    /**
+     * Actualiza un Legajo DENTRO de una transacción existente
+     * Método propio de esta clase
+     */
+    public void actualizarTx(Legajo legajo, Connection conn) throws Exception {
+        if (legajo == null || legajo.getId() <= 0) {
+            throw new IllegalArgumentException("El legajo a actualizar no puede ser null y debe tener un ID válido.");
+        }
+
+        validateLegajo(legajo); 
+
+        Legajo legajoExistente = legajoDAO.buscarPorNroLegajo(legajo.getNumeroLegajo());
+        if (legajoExistente != null && legajoExistente.getId() != legajo.getId()) {
+            throw new IllegalArgumentException("Error: El número de legajo ya existe");
+        }
+
+        legajoDAO.actualizarTx(legajo, conn);
+    }
+
+        /**
+        * Para ser usado en EmpleadoServiceImpl.
+        * La operación de borrado (lógico o físico) siempre se inicia desde el Empleado.
+        */
+    @Override
+        public void eliminar(long id) throws Exception {
+            if (id <= 0) {
+                throw new IllegalArgumentException("El ID para eliminar debe ser mayor a 0.");
+            }
+
+            Legajo legajo = legajoDAO.leer(id);
+            if (legajo == null) { 
+                throw new IllegalArgumentException("El legajo no existe");
+            }
+            
+            legajoDAO.eliminar(id);
+        }
+    
+    /**
+     * Realiza la baja lógica DENTRO de una transacción existente.
+     * Este método PROPIO es llamado por EmpleadoServiceImpl.
+     */
+    public void eliminarTx(long id, Connection conn) throws Exception {
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID para eliminar debe ser mayor a 0.");
+        }
+        legajoDAO.eliminarTx(id, conn);
+    }    
+        
     /**
      * Llama al médoto leer en LegajoDAO
      * @param id
