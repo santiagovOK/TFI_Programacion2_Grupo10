@@ -3,9 +3,11 @@ package main;
 import entities.Empleado;
 import entities.EstadoLegajo;
 import entities.Legajo;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
+
 import service.EmpleadoServiceImpl;
 import service.LegajoServiceImpl;
 
@@ -206,7 +208,7 @@ public class MenuHandler {
             return;
         }
         for (Object item : items) {
-            System.out.println(item);
+            System.out.println(item); // Asume que .toString() está bien formateado
             System.out.println(SEPARATOR);
         }
     }
