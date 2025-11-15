@@ -1,28 +1,16 @@
 package main;
-
 import java.util.Scanner;
 import dao.EmpleadoDAO;
 import dao.LegajoDAO;
 import service.EmpleadoServiceImpl;
 import service.LegajoServiceImpl;
 
-/**
- * Orquestador principal del menú de la aplicación. Gestiona el ciclo de vida
- * del menú y coordina todas las dependencias.
- *
- * Responsabilidades: - Crear y gestionar el Scanner único (evita múltiples
- * instancias de System.in) - Inicializar toda la cadena de dependencias (DAOs →
- * Services → Handler) - Ejecutar el loop principal del menú - Manejar la
- * selección de opciones y delegarlas a MenuHandler - Cerrar recursos al salir
- * (Scanner)
- *
- * Patrón: Application Controller + Dependency Injection manual Arquitectura:
- * Punto de entrada que ensambla las 4 capas (Main → Service → DAO → Models)
- *
- * IMPORTANTE: Esta clase NO tiene lógica de negocio ni de UI. Solo coordina y
- * delega.
- */
+// ... existing code ...
+
 public class AppMenu {
+
+    private static final int EXIT_OPTION = 0;
+    private static final String INVALID_INPUT_MESSAGE = "Entrada invalida. Por favor, ingrese un número.";
 
     /**
      * Scanner único compartido por toda la aplicación. IMPORTANTE: Solo debe
@@ -30,36 +18,19 @@ public class AppMenu {
      * problemas de buffering de entrada.
      */
     private final Scanner scanner;
-
     /**
      * Handler que ejecuta las operaciones del menú. Contiene toda la lógica de
      * interacción con el usuario.
      */
     private final MenuHandler menuHandler;
-
     /**
      * Flag que controla el loop principal del menú. Se setea a false cuando el
      * usuario selecciona "0 - Salir".
      */
     private boolean running;
 
-    /**
-     * Constructor que inicializa la aplicación con las dependencias
-     *
-     * Flujo de inicialización: 1. Crea Scanner único para toda la aplicación 2.
-     * Crea cadena de dependencias (DAOs → Services) mediante
-     * createPersonaService() 3. Crea MenuHandler con Scanner y PersonaService
-     * 4. Setea running=true para iniciar el loop
-     *
-     * Patrón de inyección de dependencias (DI) manual: - DomicilioDAO (sin
-     * dependencias) - PersonaDAO (depende de DomicilioDAO) -
-     * DomicilioServiceImpl (depende de DomicilioDAO) - PersonaServiceImpl
-     * (depende de PersonaDAO y DomicilioServiceImpl) - MenuHandler (depende de
-     * Scanner y PersonaServiceImpl)
-     *
-     * Esta inicialización garantiza que todas las dependencias estén
-     * correctamente conectadas.
-     */
+    // ... existing code ...
+
     public AppMenu() {
         this.scanner = new Scanner(System.in);
         EmpleadoServiceImpl empleadoService = createEmpleadoService();
