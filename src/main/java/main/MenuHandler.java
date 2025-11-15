@@ -71,70 +71,16 @@ public class MenuHandler {
 
     // --- MÉTODOS DE EMPLEADO ---
 
-    public void crearEmpleado() {
-        try {
-        System.out.println("== Crear empleado ==");
-
-         System.out.print("Nombre: ");
-         String nombre = scanner.nextLine().trim();
-         System.out.print("Apellido: ");
-         String apellido = scanner.nextLine().trim();
-         System.out.print("DNI: ");
-         String dni = scanner.nextLine().trim();
-         System.out.print("Email: ");
-         String email = scanner.nextLine().trim();
-         System.out.print("Area: ");
-         String area = scanner.nextLine().trim();
-         System.out.print("Ingrese fecha de creación (AAAA-MM-DD): ");
-         LocalDate fechaIngreso = LocalDate.parse(scanner.nextLine());
-
-         System.out.println("Datos de Legajo (se requiere crear legajo junto al empleado)");
-
-         System.out.print("Numero de Legajo: ");
-         String numeroLegajo = scanner.nextLine().trim();
-
-         EstadoLegajo estado = leerEstadoEmpleado();
-
-         System.out.print("Categoria: ");
-         String categoria = scanner.nextLine().trim();
-         System.out.print("Observaciones: ");
-         String observaciones = scanner.nextLine().trim();
-         System.out.print("Ingrese fecha de creación (AAAA-MM-DD): ");
-         LocalDate fechaAlta = LocalDate.parse(scanner.nextLine());
-
-         Legajo legajoNuevo = new Legajo(numeroLegajo, categoria,  estado,
-                  fechaAlta, observaciones);
-         Empleado empleadoNuevo = new Empleado(nombre, apellido, dni, email,fechaIngreso, area, legajoNuevo);
-
-         empleadoService.insertar(empleadoNuevo);
-        }
-          catch (Exception e) {
-            System.err.println("Error al crear persona: " + e.getMessage());
-        }
+    /**
+     * Pide datos al usuario para crear un Empleado y su Legajo.
+     * Lanza excepciones si la validación falla; AppMenu las captura.
+     */
+    public void crearEmpleado() throws Exception {
+        System.out.println(TITLE_CREAR_EMPLEADO_LEGAJO);
+        Empleado empleadoNuevo = readEmpleadoWithLegajoFromInput();
+        empleadoService.insertar(empleadoNuevo);
+        System.out.println("\n¡Empleado creado exitosamente!");
     }
-
-
-    private EstadoLegajo leerEstadoEmpleado() {
-    while (true) {
-        System.out.println("Seleccione el estado del empleado:");
-        System.out.println("1 - ACTIVO");
-        System.out.println("2 - INACTIVO");
-        System.out.print("Opción: ");
-
-        String opcion = scanner.nextLine();
-
-        switch (opcion) {
-            case "1":
-                return EstadoLegajo.ACTIVO;
-            case "2":
-                return EstadoLegajo.INACTIVO;
-            default:
-                System.out.println("Opción inválida. Intente nuevamente.\n");
-        }
-    }
-}
-
-
 
     public void listarEmpleados() throws Exception {
         List<Empleado> empleados = empleadoService.getAll();
