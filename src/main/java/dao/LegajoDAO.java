@@ -30,7 +30,7 @@ public class LegajoDAO implements GenericDAO<Legajo> {
      * SQL para insertar un Legajo (B). Requiere el 'empleado_id' (FK de A).
      */
     private static final String INSERT_SQL
-            = "INSERT INTO legajo (nroLegajo, categoria, estado, fechaAlta, observaciones, empleado_id) "
+            = "INSERT INTO legajo (nro_legajo, categoria, estado, fecha_alta, observaciones, empleado_id) "
             + "VALUES (?, ?, ?, ?, ?, ?)";
 
     /**
@@ -38,7 +38,7 @@ public class LegajoDAO implements GenericDAO<Legajo> {
      * el 'empleado_id', ya que la relación 1-a-1 es fija.
      */
     private static final String UPDATE_SQL
-            = "UPDATE legajo SET nroLegajo = ?, categoria = ?, estado = ?, fechaAlta = ?, observaciones = ? "
+            = "UPDATE legajo SET nro_legajo = ?, categoria = ?, estado = ?, fecha_alta = ?, observaciones = ? "
             + "WHERE id = ?";
 
     /**
@@ -67,7 +67,7 @@ public class LegajoDAO implements GenericDAO<Legajo> {
      * 'nro_legajo' es UNIQUE en la BD.
      */
     private static final String SELECT_BY_NRO_LEGAJO_SQL
-            = "SELECT * FROM legajo WHERE nroLegajo = ? AND eliminado = FALSE";
+            = "SELECT * FROM legajo WHERE nro_legajo = ? AND eliminado = FALSE";
 
 //    // --- IMPLEMENTACIÓN DE MÉTODOS GENÉRICOS (Relación con GenericDAO) ---
 //
@@ -440,7 +440,7 @@ public class LegajoDAO implements GenericDAO<Legajo> {
         Legajo legajo = new Legajo();
 
         legajo.setId(rs.getLong("id"));
-        legajo.setNumeroLegajo(rs.getString("nroLegajo"));
+        legajo.setNumeroLegajo(rs.getString("nro_legajo"));
         legajo.setCategoria(rs.getString("categoria"));
 
         // CORRECCIÓN (Conflicto 3): Convertir String de BD a Enum
@@ -450,7 +450,7 @@ public class LegajoDAO implements GenericDAO<Legajo> {
         }
 
         // CORRECCIÓN (Conflicto 2): Usar LocalDate
-        java.sql.Date fechaAlta = rs.getDate("fechaAlta");
+        java.sql.Date fechaAlta = rs.getDate("fecha_alta");
         if (fechaAlta != null) {
             legajo.setFechaAlta(fechaAlta.toLocalDate());
         }

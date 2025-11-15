@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class DatabaseConnection {
 
-    private static final String PROPERTIES_FILE = "config.properties";
+    private static final String PROPERTIES_FILE = "config.properties"; // Configurar el archivo con los datos personales
     private static final Properties properties = new Properties();
     private static final String DB_URL;
 

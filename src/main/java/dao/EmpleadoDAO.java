@@ -24,25 +24,25 @@ public class EmpleadoDAO implements GenericDAO<Empleado> {
 
     // --- QUERIES SQL (EMPLEADO) ---
     private static final String INSERT_SQL
-            = "INSERT INTO empleado (nombre, apellido, dni, email, fechaIngreso, area) VALUES (?, ?, ?, ?, ?, ?)";
+            = "INSERT INTO empleado (nombre, apellido, dni, email, fecha_ingreso, area) VALUES (?, ?, ?, ?, ?, ?)";
 
     private static final String UPDATE_SQL
-            = "UPDATE empleado SET nombre = ?, apellido = ?, dni = ?, email = ?, fechaIngreso = ?, area = ? WHERE id = ?";
+            = "UPDATE empleado SET nombre = ?, apellido = ?, dni = ?, email = ?, fecha_ingreso = ?, area = ? WHERE id = ?";
 
     private static final String DELETE_SQL
             = "UPDATE empleado SET eliminado = TRUE WHERE id = ?";
 
     // --- QUERIES SQL (EMPLEADO + LEGAJO con JOIN) ---
     private static final String SELECT_BY_ID_SQL
-            = "SELECT e.id AS emp_id, e.nombre, e.apellido, e.dni, e.email, e.fechaIngreso, e.area, "
-            + "l.id AS leg_id, l.nroLegajo, l.categoria, l.estado, l.fechaAlta, l.observaciones "
+            = "SELECT e.id AS emp_id, e.nombre, e.apellido, e.dni, e.email, e.fecha_ingreso, e.area, "
+            + "l.id AS leg_id, l.nro_legajo, l.categoria, l.estado, l.fecha_alta, l.observaciones "
             + "FROM empleado e "
             + "LEFT JOIN legajo l ON e.id = l.empleado_id AND l.eliminado = FALSE "
             + "WHERE e.id = ? AND e.eliminado = FALSE";
 
     private static final String SELECT_ALL_SQL
-            = "SELECT e.id AS emp_id, e.nombre, e.apellido, e.dni, e.email, e.fechaIngreso, e.area, "
-            + "l.id AS leg_id, l.nroLegajo, l.categoria, l.estado, l.fechaAlta, l.observaciones "
+            = "SELECT e.id AS emp_id, e.nombre, e.apellido, e.dni, e.email, e.fecha_ingreso, e.area, "
+            + "l.id AS leg_id, l.nro_legajo, l.categoria, l.estado, l.fecha_alta, l.observaciones "
             + "FROM empleado e "
             + "LEFT JOIN legajo l ON e.id = l.empleado_id AND l.eliminado = FALSE "
             + "WHERE e.eliminado = FALSE";
@@ -54,8 +54,8 @@ public class EmpleadoDAO implements GenericDAO<Empleado> {
      * JOIN para cargar el Legajo.
      */
     private static final String SELECT_BY_DNI_SQL
-            = "SELECT e.id AS emp_id, e.nombre, e.apellido, e.dni, e.email, e.fechaIngreso, e.area, "
-            + "l.id AS leg_id, l.nroLegajo, l.categoria, l.estado, l.fecha_alta, l.observaciones "
+            = "SELECT e.id AS emp_id, e.nombre, e.apellido, e.dni, e.email, e.fecha_ingreso, e.area, "
+            + "l.id AS leg_id, l.nro_legajo, l.categoria, l.estado, l.fecha_alta, l.observaciones "
             + "FROM empleado e "
             + "LEFT JOIN legajo l ON e.id = l.empleado_id AND l.eliminado = FALSE "
             + "WHERE e.dni = ? AND e.eliminado = FALSE";
@@ -66,8 +66,8 @@ public class EmpleadoDAO implements GenericDAO<Empleado> {
      * LEFT JOIN para cargar el Legajo.
      */
     private static final String SELECT_BY_NAME_SQL
-            = "SELECT e.id AS emp_id, e.nombre, e.apellido, e.dni, e.email, e.fechaIngreso, e.area, "
-            + "l.id AS leg_id, l.nroLegajo, l.categoria, l.estado, l.fecha_alta, l.observaciones "
+            = "SELECT e.id AS emp_id, e.nombre, e.apellido, e.dni, e.email, e.fecha_ingreso, e.area, "
+            + "l.id AS leg_id, l.nro_legajo, l.categoria, l.estado, l.fecha_alta, l.observaciones "
             + "FROM empleado e "
             + "LEFT JOIN legajo l ON e.id = l.empleado_id AND l.eliminado = FALSE "
             + "WHERE (e.nombre LIKE ? OR e.apellido LIKE ?) AND e.eliminado = FALSE";
@@ -268,7 +268,7 @@ public class EmpleadoDAO implements GenericDAO<Empleado> {
         empleado.setDni(rs.getString("dni"));
         empleado.setEmail(rs.getString("email"));
 
-        Date fechaIngreso = rs.getDate("fechaIngreso");
+        Date fechaIngreso = rs.getDate("fecha_ingreso");
         if (fechaIngreso != null) {
             empleado.setFechaIngreso(fechaIngreso.toLocalDate());
         }
@@ -279,7 +279,7 @@ public class EmpleadoDAO implements GenericDAO<Empleado> {
         if (legajoId > 0 && !rs.wasNull()) {
             Legajo legajo = new Legajo();
             legajo.setId(legajoId);
-            legajo.setNumeroLegajo(rs.getString("nroLegajo"));
+            legajo.setNumeroLegajo(rs.getString("nro_legajo"));
             legajo.setCategoria(rs.getString("categoria"));
 
             String estadoStr = rs.getString("estado");
@@ -288,7 +288,7 @@ public class EmpleadoDAO implements GenericDAO<Empleado> {
                 legajo.setEstado(entities.EstadoLegajo.valueOf(estadoStr));
             }
 
-            Date fechaAlta = rs.getDate("fechaAlta");
+            Date fechaAlta = rs.getDate("fecha_alta");
             if (fechaAlta != null) {
                 legajo.setFechaAlta(fechaAlta.toLocalDate());
             }
