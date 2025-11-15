@@ -95,21 +95,16 @@ public class MenuHandler {
         throw new UnsupportedOperationException(ERROR_ELIMINAR_EMPLEADO_NOT_IMPLEMENTED);
     }
 
-    public void buscarEmpleadoID() {
-        try {
-            System.out.println("== Buscar empleado por ID ==");
-            System.out.print("ID de la persona a eliminar: ");
-            int id = Integer.parseInt(scanner.nextLine());
-            Empleado empleado = empleadoService.getById(id);
-            if (empleado == null) {
-                System.out.println("Empleado no encontrado con ID: " + id);
-                return;
-            }
-            System.out.println("Empleado encontrado:");
-            System.out.println(empleado);
-        } catch (Exception e) {
-            System.err.println("ERROR al buscar empleado: " + e.getMessage());
-        }
+    /**
+     * Busca un empleado por ID. Las excepciones (NumberFormatException,
+     * IllegalArgumentException, etc.) son propagadas a AppMenu.
+     */
+    public void buscarEmpleadoID() throws Exception {
+        System.out.println(TITLE_BUSCAR_EMPLEADO);
+        long id = readEmpleadoIdFromInput();
+        Empleado empleado = empleadoService.getById(id);
+        System.out.println("Empleado encontrado:");
+        System.out.println(empleado);
     }
 
     // --- MÉTODOS DE LEGAJO ---
