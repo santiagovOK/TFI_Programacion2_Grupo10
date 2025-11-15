@@ -370,24 +370,31 @@ public class LegajoDAO implements GenericDAO<Legajo> {
     }
 
     /**
+     * GENERA ERROR DE COMPILACIÓN setLegajoParameters por la firma. 
+     * No se usa.
+     */
+    
+    /**
      * Método auxiliar para ejecutar la lógica de creación. Es llamado tanto por
      * crear() como por crearTx(). NO cierra la conexión.
-     */
-    private void ejecutarCreacion(Legajo legajo, Connection conn) throws SQLException {
-        try (PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
+     
+        private void ejecutarCreacion(Legajo legajo, Connection conn) throws SQLException {
+            try (PreparedStatement stmt = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
-            setLegajoParameters(stmt, legajo);
-            stmt.executeUpdate();
+                setLegajoParameters(stmt, legajo);
+                stmt.executeUpdate();
 
-            // Obtenemos el ID autogenerado
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    legajo.setId(rs.getLong(1));
+                // Obtenemos el ID autogenerado
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        legajo.setId(rs.getLong(1));
+                    }
                 }
             }
         }
-    }
-
+    */
+    
+    
     /**
      * Método auxiliar para ejecutar la lógica de eliminación (baja lógica). Es
      * llamado tanto por eliminar() como por eliminarTx(). NO cierra la
@@ -433,7 +440,7 @@ public class LegajoDAO implements GenericDAO<Legajo> {
         Legajo legajo = new Legajo();
 
         legajo.setId(rs.getLong("id"));
-        legajo.setNroLegajo(rs.getString("nro_legajo"));
+        legajo.setNumeroLegajo(rs.getString("nro_legajo"));
         legajo.setCategoria(rs.getString("categoria"));
 
         // CORRECCIÓN (Conflicto 3): Convertir String de BD a Enum
@@ -454,4 +461,16 @@ public class LegajoDAO implements GenericDAO<Legajo> {
         // en la entidad Legajo, respetando la unidireccionalidad
         return legajo;
     }
+    
+    /**
+     * Método abstracto
+     * Lanzamos un error porque nuestra regla de negocio prohíbe crear un Legajo por sí solo. 
+     * Se debe usar el método crearTx.
+     */
+    @Override
+    public void crear(Legajo legajo) throws SQLException {
+        throw new UnsupportedOperationException("No puede crear Legajo sin Empleado");
+    }
+    
+    
 }

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package main;
 
 import entities.Empleado;
@@ -61,9 +58,30 @@ public class MenuHandler {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    /**
+     * Muestra los empleados activos.
+     */
     void listarEmpleados() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        System.out.println("Listando Empleados:");
+
+        try {
+            
+            List<Empleado> empleados = empleadoService.getAll(); // Llamamos al servicio para obtener la lista
+            if (empleados.isEmpty()) {
+                System.out.println("No hay empleados.");
+            } else {
+                for (Empleado emp : empleados) {  // Recorre la lista e imprime por consola cada uno
+                    System.out.println(emp.toString()); 
+                    System.out.println("-----------------");
+                }    
+            }
+
+        } catch (Exception e) {
+            System.err.println("\nERROR: " + e.getMessage());
+        }
     }
+    
 
     void actualizarEmpleado() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
