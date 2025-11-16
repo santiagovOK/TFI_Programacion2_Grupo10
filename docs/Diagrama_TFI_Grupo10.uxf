@@ -1,27 +1,42 @@
-<diagram program="umletino" version="15.1"><zoom_level>6</zoom_level><element><id>UMLClass</id><coordinates><x>312</x><y>162</y><w>168</w><h>96</h></coordinates><panel_attributes>AppMenu
+<diagram program="umletino" version="15.1"><zoom_level>6</zoom_level><element><id>UMLClass</id><coordinates><x>384</x><y>108</y><w>168</w><h>96</h></coordinates><panel_attributes>AppMenu
 --
 -scanner: Scanner
 -menuHandler: MenuHandler
--running: boolean
 --
-+main(String[]): void
++AppMenu()
 +run(): void
--processOption(int): void
--createEmpleadoService(): EmpleadoServiceImpl</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>336</x><y>90</y><w>102</w><h>24</h></coordinates><panel_attributes>Paquete: main</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>84</x><y>162</y><w>144</w><h>66</h></coordinates><panel_attributes>&lt;&lt;utility&gt;&gt;
+-readMenuOption(): Integer
+-handleMenuOption(int): boolean
+-executeMenuAction(MenuAction): void
+-initializeMenuHandler(): MenuHandler</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>408</x><y>36</y><w>102</w><h>24</h></coordinates><panel_attributes>Paquete: main</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>156</x><y>108</y><w>144</w><h>66</h></coordinates><panel_attributes>&lt;&lt;utility&gt;&gt;
 MenuDisplay
 --
 --
-+mostrarMenuPrincipal(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>600</x><y>162</y><w>168</w><h>96</h></coordinates><panel_attributes>MenuHandler
++mostrarMenuPrincipal(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>672</x><y>0</y><w>234</w><h>216</h></coordinates><panel_attributes>MenuHandler
 --
 -scanner: Scanner
 -empleadoService: EmpleadoServiceImpl
+-legajoService: LegajoServiceImpl
 --
-+MenuHandler(Scanner, EmpleadoServiceImpl)
++MenuHandler(Scanner, EmpleadoServiceImpl, LegajoServiceImpl)
 +crearEmpleado(): void
 +listarEmpleados(): void
 +actualizarEmpleado(): void
-+eliminarEmpleado(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>222</x><y>180</y><w>102</w><h>24</h></coordinates><panel_attributes>lt=..&gt;
-&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>150;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>474</x><y>186</y><w>138</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;205;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>96</x><y>342</y><w>168</w><h>120</h></coordinates><panel_attributes>EmpleadoServiceImpl
++eliminarEmpleado(): void
++buscarEmpleadoID(): void
++buscarEmpleadoPorDNI(): void
++crearLegajo(): void
++listarLegajos(): void
++actualizarLegajo(): void
++eliminarLegajo(): void
++listarLegajoPorEstado(): void
+-readEmpleadoWithLegajoFromInput(): Empleado
+-readEmpleadoIdFromInput(): long
+-leerEstadoLegajo(): EstadoLegajo
+-printList(String, String, List&lt;?&gt;): void
+-esDniValido(String): boolean
+-esEmailValido(String): boolean</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>294</x><y>126</y><w>102</w><h>24</h></coordinates><panel_attributes>lt=..&gt;
+&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>150;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>546</x><y>132</y><w>138</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;205;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>156</x><y>288</y><w>180</w><h>120</h></coordinates><panel_attributes>EmpleadoServiceImpl
 --
 -empleadoDAO: EmpleadoDAO
 -legajoService: LegajoServiceImpl
@@ -31,18 +46,25 @@ MenuDisplay
 +actualizar(Empleado): void
 +eliminar(long): void
 -validateEmpleado(Empleado): void
--validateDniUnique(String, Long): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>582</x><y>342</y><w>168</w><h>132</h></coordinates><panel_attributes>LegajoServiceImpl
+-validateDniUnique(String, Long): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>654</x><y>288</y><w>204</w><h>174</h></coordinates><panel_attributes>LegajoServiceImpl
 --
 -legajoDAO: LegajoDAO
 --
 +LegajoServiceImpl(LegajoDAO)
 +insertar(Legajo): void
 +insertarTx(Legajo, long, Connection): void
++actualizar(Legajo): void
 +actualizarTx(Legajo, Connection): void
++eliminar(long): void
 +eliminarTx(long, Connection): void
 +getById(long): Legajo
 +getAll(): List&lt;Legajo&gt;
--validateLegajo(Legajo): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>360</x><y>324</y><w>102</w><h>24</h></coordinates><panel_attributes>Paquete: service</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>306</x><y>534</y><w>156</w><h>144</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
++getByEstado(EstadoLegajo): List&lt;Legajo&gt;
+-validateLegajoData(Legajo): void
+-validateLegajoId(long): void
+-validateLegajoForUpdate(Legajo): void
+-validateNumeroLegajoUniqueForInsert(Legajo): void
+-validateNumeroLegajoUniqueForUpdate(Legajo): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>432</x><y>270</y><w>102</w><h>24</h></coordinates><panel_attributes>Paquete: service</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>378</x><y>480</y><w>156</w><h>144</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
 GenericDAO&lt;T&gt;
 --
 --
@@ -53,17 +75,30 @@ GenericDAO&lt;T&gt;
 +eliminar(long): void
 +eliminarTx(long, Connection): void
 +leer(long): T
-+leerTodos(): List&lt;T&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>90</x><y>558</y><w>156</w><h>90</h></coordinates><panel_attributes>EmpleadoDAO
++leerTodos(): List&lt;T&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>90</x><y>504</y><w>228</w><h>102</h></coordinates><panel_attributes>EmpleadoDAO
 --
 --
 +buscarPorDni(String): Empleado
-+buscarPorNombreApellido(String): List&lt;Empleado&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>582</x><y>564</y><w>168</w><h>120</h></coordinates><panel_attributes>LegajoDAO
++buscarPorNombreApellido(String): List&lt;Empleado&gt;
+-setEmpleadoParameters(PreparedStatement, Empleado): void
+-assignGeneratedId(PreparedStatement, Empleado): void
+-executeUpdate(Empleado, Connection): void
+-executeSoftDelete(long, Connection): void
+-mapRowToEmpleado(ResultSet): Empleado
+-isNullOrBlank(String): boolean</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>654</x><y>510</y><w>216</w><h>120</h></coordinates><panel_attributes>LegajoDAO
 --
 --
 +crear(Legajo): void
 +crearTx(Legajo, Connection): void
 +crearTx(Legajo, long, Connection): void
-+buscarPorNroLegajo(String): Legajo</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>336</x><y>492</y><w>102</w><h>24</h></coordinates><panel_attributes>Paquete: dao</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>90</x><y>966</y><w>144</w><h>132</h></coordinates><panel_attributes>Empleado
++buscarPorNroLegajo(String): Legajo
++buscarPorEstado(EstadoLegajo): List&lt;Legajo&gt;
+-setInsertParameters(PreparedStatement, Legajo, long): void
+-assignGeneratedId(PreparedStatement, Legajo): void
+-executeUpdate(Legajo, Connection): void
+-executeSoftDelete(long, Connection): void
+-mapRowToLegajo(ResultSet): Legajo
+-findByIdInternal(Connection, long): Legajo</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>408</x><y>438</y><w>102</w><h>24</h></coordinates><panel_attributes>Paquete: dao</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>78</x><y>912</y><w>228</w><h>264</h></coordinates><panel_attributes>Empleado
 --
 -nombre: String
 -apellido: String
@@ -73,10 +108,25 @@ GenericDAO&lt;T&gt;
 -area: String
 -legajo: Legajo
 --
++Empleado(String, String, String, String, LocalDate, String, Legajo)
 +Empleado()
++getNombre(): String
++setNombre(String): void
++getApellido(): String
++setApellido(String): void
++getDni(): String
++setDni(String): void
++getEmail(): String
++setEmail(String): void
++getFechaIngreso(): LocalDate
++setFechaIngreso(LocalDate): void
++getArea(): String
++setArea(String): void
 +getLegajo(): Legajo
 +setLegajo(Legajo): void
-+eliminarRegistro(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>354</x><y>966</y><w>156</w><h>132</h></coordinates><panel_attributes>Legajo
++eliminarRegistro(): void
++toString(): String
+-buildLegajoDescription(): String</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>378</x><y>912</y><w>204</w><h>204</h></coordinates><panel_attributes>Legajo
 --
 -numeroLegajo: String
 -categoria: String
@@ -84,33 +134,50 @@ GenericDAO&lt;T&gt;
 -fechaAlta: LocalDate
 -observaciones: String
 --
++Legajo(String, String, EstadoLegajo, LocalDate, String)
 +Legajo()
++getNumeroLegajo(): String
++setNumeroLegajo(String): void
++getCategoria(): String
++setCategoria(String): void
 +getEstado(): EstadoLegajo
 +setEstado(EstadoLegajo): void
-+eliminarRegistro(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>324</x><y>714</y><w>102</w><h>24</h></coordinates><panel_attributes>Paquete: entities</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>306</x><y>768</y><w>144</w><h>108</h></coordinates><panel_attributes>&lt;&lt;abstract&gt;&gt;
++getFechaAlta(): LocalDate
++setFechaAlta(LocalDate): void
++getObservaciones(): String
++setObservaciones(String): void
++eliminarRegistro(): void
++toString(): String</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>396</x><y>660</y><w>102</w><h>24</h></coordinates><panel_attributes>Paquete: entities</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>378</x><y>708</y><w>144</w><h>114</h></coordinates><panel_attributes>&lt;&lt;abstract&gt;&gt;
 Base
 --
 -id: long
 -eliminado: boolean
 --
-+Base()
+#Base()
 +getId(): long
 +setId(long): void
 +isEliminado(): boolean
 +setEliminado(boolean): void
-+eliminarRegistro(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>612</x><y>960</y><w>102</w><h>78</h></coordinates><panel_attributes>&lt;&lt;enum&gt;&gt;
+#marcarEliminado(): void
++eliminarRegistro(): void {abstract}</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>684</x><y>906</y><w>102</w><h>96</h></coordinates><panel_attributes>&lt;&lt;enum&gt;&gt;
 EstadoLegajo
 --
 ACTIVO
-INACTIVO</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>186</x><y>228</y><w>426</w><h>126</h></coordinates><panel_attributes>lt=..&gt;
-&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>690;10;10;190</additional_attributes></element><element><id>Relation</id><coordinates><x>162</x><y>456</y><w>18</w><h>114</h></coordinates><panel_attributes>lt=..&gt;</panel_attributes><additional_attributes>10;10;10;170</additional_attributes></element><element><id>Relation</id><coordinates><x>648</x><y>468</y><w>18</w><h>108</h></coordinates><panel_attributes>lt=..&gt;</panel_attributes><additional_attributes>10;10;10;160</additional_attributes></element><element><id>Relation</id><coordinates><x>156</x><y>642</y><w>48</w><h>336</h></coordinates><panel_attributes>lt=..&gt;
-&lt;&lt;create&gt;&gt;</panel_attributes><additional_attributes>10;10;20;540</additional_attributes></element><element><id>Relation</id><coordinates><x>498</x><y>678</y><w>156</w><h>300</h></coordinates><panel_attributes>lt=..&gt;
-&lt;&lt;create&gt;&gt;</panel_attributes><additional_attributes>240;10;10;480</additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>606</y><w>78</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>105;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>456</x><y>612</y><w>138</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;205;10</additional_attributes></element><element><id>Relation</id><coordinates><x>258</x><y>432</y><w>96</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>135;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>480</x><y>426</y><w>114</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;165;10</additional_attributes></element><element><id>Relation</id><coordinates><x>258</x><y>354</y><w>330</w><h>24</h></coordinates><panel_attributes>lt=-&gt;
-&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>10;20;530;20</additional_attributes></element><element><id>Relation</id><coordinates><x>228</x><y>870</y><w>132</w><h>108</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>200;10;10;160</additional_attributes></element><element><id>Relation</id><coordinates><x>408</x><y>870</y><w>18</w><h>108</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;160</additional_attributes></element><element><id>Relation</id><coordinates><x>228</x><y>1008</y><w>138</w><h>30</h></coordinates><panel_attributes>lt=-&gt;
+INACTIVO
+--
+-descripcion: String
+--
++getDescripcion(): String
++isActivo(): boolean
++isInactivo(): boolean</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>258</x><y>174</y><w>426</w><h>126</h></coordinates><panel_attributes>lt=..&gt;
+&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>690;10;10;190</additional_attributes></element><element><id>Relation</id><coordinates><x>234</x><y>402</y><w>18</w><h>114</h></coordinates><panel_attributes>lt=..&gt;</panel_attributes><additional_attributes>10;10;10;170</additional_attributes></element><element><id>Relation</id><coordinates><x>720</x><y>456</y><w>18</w><h>66</h></coordinates><panel_attributes>lt=..&gt;</panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>228</x><y>600</y><w>48</w><h>324</h></coordinates><panel_attributes>lt=..&gt;
+&lt;&lt;create&gt;&gt;</panel_attributes><additional_attributes>10;10;20;520</additional_attributes></element><element><id>Relation</id><coordinates><x>570</x><y>624</y><w>156</w><h>300</h></coordinates><panel_attributes>lt=..&gt;
+&lt;&lt;create&gt;&gt;</panel_attributes><additional_attributes>240;10;10;480</additional_attributes></element><element><id>Relation</id><coordinates><x>312</x><y>552</y><w>78</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>105;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>528</x><y>558</y><w>138</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;210;10</additional_attributes></element><element><id>Relation</id><coordinates><x>330</x><y>378</y><w>96</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>135;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>552</x><y>372</y><w>114</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;165;10</additional_attributes></element><element><id>Relation</id><coordinates><x>330</x><y>300</y><w>330</w><h>24</h></coordinates><panel_attributes>lt=-&gt;
+&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>10;20;530;20</additional_attributes></element><element><id>Relation</id><coordinates><x>300</x><y>816</y><w>132</w><h>108</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>200;10;10;160</additional_attributes></element><element><id>Relation</id><coordinates><x>480</x><y>816</y><w>18</w><h>108</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;160</additional_attributes></element><element><id>Relation</id><coordinates><x>300</x><y>954</y><w>90</w><h>30</h></coordinates><panel_attributes>lt=-&gt;
 m1=1
 m2=1
--legajo</panel_attributes><additional_attributes>10;20;205;20</additional_attributes></element><element><id>Relation</id><coordinates><x>504</x><y>990</y><w>120</w><h>48</h></coordinates><panel_attributes>lt=..&gt;
-&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>10;60;180;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>342</x><y>378</y><w>144</w><h>90</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
+-legajo</panel_attributes><additional_attributes>10;20;125;20</additional_attributes></element><element><id>Relation</id><coordinates><x>576</x><y>936</y><w>120</w><h>48</h></coordinates><panel_attributes>lt=..&gt;
+&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>10;60;180;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>414</x><y>324</y><w>144</w><h>90</h></coordinates><panel_attributes>&lt;&lt;interface&gt;&gt;
 GenericService&lt;T&gt;
 --
 --
