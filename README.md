@@ -92,11 +92,11 @@ Esto justifica una asociación unidireccional donde la entidad `Empleado` conoce
 
 ### Requisitos Técnicos
 
-* **Java JDK 17 o superior**
+* **Java JDK 21 o superior**
 * **MySQL 8.0 o superior**
 * **DBeaver o cliente SQL compatible**
 * **Apache NetBeans IDE 19 o superior**
-* **Conector JDBC MySQL (`mysql-connector-j-8.4.0.jar`)**
+* **Conector JDBC MySQL (`mysql-connector-j-9.5.0.jar`)**
 
 ---
 
