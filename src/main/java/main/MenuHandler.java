@@ -40,6 +40,7 @@ public class MenuHandler {
 
     // Constantes para operaciones no implementadas / reglas de negocio
     private static final String ERROR_CREAR_LEGAJO_NOT_SUPPORTED = "Crear legajo directamente está deshabilitado; debe crearse junto con un Empleado.";
+    private static final String ERROR_ACTUALIZAR_LEGAJO_NOT_SUPPORTED = "Actualizar legajo directamente está deshabilitado; debe actualizarse desde el Empleado.";
     private static final String ERROR_ELIMINAR_LEGAJO_NOT_SUPPORTED = "Eliminar legajo directamente está deshabilitado; debe eliminarse desde el Empleado.";
 
     /**
@@ -262,71 +263,8 @@ public class MenuHandler {
         }
     }
 
-    public void actualizarLegajo() throws ServiceException {
-        System.out.println("== Actualizar Legajo ==");
-        System.out.print("ID del legajo a actualizar: ");
-        String idStr = scanner.nextLine().trim();
-        long id;
-        try {
-            id = Long.parseLong(idStr);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("El ID debe ser un número válido.");
-        }
-
-        try {
-            Legajo legajo = legajoService.getById(id);
-            if (legajo == null) {
-                throw new ServiceException("No se encontró ningún legajo con el ID: " + id);
-            }
-
-            System.out.println("\nEditando datos del legajo. Deje el campo en blanco para no modificar.");
-
-            System.out.print("Número de Legajo [" + legajo.getNumeroLegajo() + "]: ");
-            String numeroLegajo = scanner.nextLine().trim();
-            if (!numeroLegajo.isEmpty()) legajo.setNumeroLegajo(numeroLegajo);
-
-            System.out.print("Categoría [" + legajo.getCategoria() + "]: ");
-            String categoria = scanner.nextLine().trim();
-            if (!categoria.isEmpty()) legajo.setCategoria(categoria);
-
-            System.out.println("Estado del legajo [" + legajo.getEstado() + "]:");
-            System.out.println("  1 - ACTIVO");
-            System.out.println("  2 - INACTIVO");
-            System.out.print("Opción (deje en blanco para no cambiar): ");
-            String estadoOpt = scanner.nextLine().trim();
-            if (!estadoOpt.isEmpty()) {
-                switch (estadoOpt) {
-                    case "1":
-                        legajo.setEstado(EstadoLegajo.ACTIVO);
-                        break;
-                    case "2":
-                        legajo.setEstado(EstadoLegajo.INACTIVO);
-                        break;
-                    default:
-                        System.out.println("Opción de estado no válida. No se cambiará.");
-                }
-            }
-
-            System.out.print("Observaciones [" + legajo.getObservaciones() + "]: ");
-            String observaciones = scanner.nextLine().trim();
-            if (!observaciones.isEmpty()) legajo.setObservaciones(observaciones);
-
-            System.out.print("Fecha de Alta (AAAA-MM-DD) [" + legajo.getFechaAlta() + "]: ");
-            String fechaAltaStr = scanner.nextLine().trim();
-            if (!fechaAltaStr.isEmpty()) {
-                try {
-                    legajo.setFechaAlta(LocalDate.parse(fechaAltaStr));
-                } catch (DateTimeParseException e) {
-                    throw new IllegalArgumentException(INVALID_DATE_MESSAGE);
-                }
-            }
-
-            legajoService.actualizar(legajo);
-            System.out.println("\n¡Legajo actualizado exitosamente!");
-
-        } catch (Exception e) {
-            throw new ServiceException("Error al actualizar legajo: " + e.getMessage(), e);
-        }
+    public void actualizarLegajo() {
+        throw new UnsupportedOperationException(ERROR_ACTUALIZAR_LEGAJO_NOT_SUPPORTED);
     }
 
     public void eliminarLegajo() {

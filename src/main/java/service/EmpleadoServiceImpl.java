@@ -25,13 +25,6 @@ import java.util.List;
  */
 public class EmpleadoServiceImpl implements GenericService<Empleado> {
 
-    private static final String TRANSACTION_SUCCESS_CREATE = "La transacción de creación fue un éxito.";
-    private static final String TRANSACTION_SUCCESS_UPDATE = "La transacción de actualización fue un éxito.";
-    private static final String TRANSACTION_SUCCESS_DELETE = "La transacción de eliminación fue un éxito.";
-    private static final String TRANSACTION_ERROR_CREATE = "Error en la transacción de creación.";
-    private static final String TRANSACTION_ERROR_UPDATE = "Error en la transacción de actualización.";
-    private static final String TRANSACTION_ERROR_DELETE = "Error en la transacción de eliminación.";
-
     /**
      * DAO para acceso a datos de empleados. Inyectado en el constructor
      * (Dependency Injection).
@@ -75,9 +68,8 @@ public class EmpleadoServiceImpl implements GenericService<Empleado> {
             legajoService.insertarTx(legajo, empleado.getId(), conn);
 
             txManager.commit();
-            System.out.println(TRANSACTION_SUCCESS_CREATE);
         } catch (Exception e) {
-            System.err.println(TRANSACTION_ERROR_CREATE + " Rollback automático ejecutado.");
+            // El rollback se maneja en el close() del TransactionManager
             throw new Exception("Error al crear empleado: ".concat(e.getMessage()), e);
         }
     }
@@ -104,9 +96,8 @@ public class EmpleadoServiceImpl implements GenericService<Empleado> {
             empleadoDAO.actualizarTx(empleado, conn);               // Actualiza empleado
 
             txManager.commit();
-            System.out.println(TRANSACTION_SUCCESS_UPDATE);
         } catch (Exception e) {
-            System.err.println(TRANSACTION_ERROR_UPDATE + " Rollback automático ejecutado.");
+            // El rollback se maneja en el close() del TransactionManager
             throw new Exception("Error al actualizar empleado: ".concat(e.getMessage()), e);
         }
     }
@@ -137,10 +128,8 @@ public class EmpleadoServiceImpl implements GenericService<Empleado> {
             empleadoDAO.eliminarTx(id, conn);         // Luego se elimina a Empleado
 
             txManager.commit();
-            System.out.println(TRANSACTION_SUCCESS_DELETE);
-            System.out.println("Empleado y su Legajo eliminados");
         } catch (Exception e) {
-            System.err.println(TRANSACTION_ERROR_DELETE + " Rollback automático ejecutado.");
+            // El rollback se maneja en el close() del TransactionManager
             throw new Exception("Error al eliminar empleado: ".concat(e.getMessage()), e);
         }
     }
