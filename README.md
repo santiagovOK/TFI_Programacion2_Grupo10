@@ -145,7 +145,7 @@ Dado que los archivos del entorno (`nbproject/`, `build.xml`, etc.) no se incluy
 8. Una vez creado el proyecto, en el panel izquierdo hacer **clic derecho sobre “Libraries” → Add JAR/Folder...**  
 9. Seleccionar el archivo **`mysql-connector-j-9.5.0.jar`** ubicado dentro de la carpeta `/lib/` del repositorio.  
 10. Confirmar con **Open** y verificar que el JAR aparezca en la lista de librerías del proyecto.  
-11. Luego, abrir el archivo **`config.properties`** (ubicado en la carpeta `src/config/` o en la raíz del proyecto) y completar las credenciales de conexión a MySQL:
+11. Luego, copiar el archivo **`config.properties.example`** y usarlo de modelo para **`config.properties`** (ubicarlo en la carpeta `src/` o en la raíz del proyecto) y completar las credenciales de conexión a MySQL:
 
     ```properties
     db.url=jdbc:mysql://localhost:3306/tpi_prog2_empleados
