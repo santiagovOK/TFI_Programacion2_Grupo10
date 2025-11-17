@@ -10,7 +10,7 @@
 *.ear
 
 # ...EXCEPTO el driver de mysql que SÍ necesitamos
-!lib/
+!lib/mysql-connector-j-9.5.0.jar
 
 # ===== Logs y temporales =====
 *.log
