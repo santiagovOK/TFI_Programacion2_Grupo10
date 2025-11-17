@@ -23,24 +23,28 @@
 
 ```
 📦 TFI_Programacion2_Grupo10
- ┣ 📂 src/
- ┃ ┣ 📂 config/                # Conexión a la base de datos (DatabaseConnection)
- ┃ ┣ 📂 entities/              # Clases Empleado y Legajo
- ┃ ┣ 📂 dao/                   # Interfaces genéricas y DAOs concretos (EmpleadoDao, LegajoDao)
- ┃ ┣ 📂 service/               # Lógica de negocio y manejo de transacciones
- ┃ ┗ 📂 main/                  # Clase principal y menú de consola (AppMenu)
- ┣ 📂 sql/
- ┃ ┣ create_database.sql       # Script de creación de la base y tablas
- ┃ ┗ insert_data.sql           # Script con datos de prueba
- ┣ 📂 lib/                     # Librerías externas (.jar) agregadas al proyecto desde NetBeans
- ┣ 📂 img/                     # Diagramas y recursos visuales
- ┃ ┗ 📄 UML_Empleado_Legajo.png # Imagen del Diagrama UML del dominio Empleado-Legajo
- ┣ 📂 docs/                    
- ┃ ┣ 📄 Informe_TFI_Grupo10.pdf   # Informe final con análisis y conclusiones
- ┃ ┗ 📄 Diagrama_TFI_Grupo10.uxf   # Diagrama UML para importar en UMLetino
- ┣ 📄 config.properties         # Configuración de conexión MySQL (usuario, contraseña, URL)
- ┣ 📄 .gitignore                # Exclusiones de archivos y carpetas
- ┗ 📄 README.md                 # Archivo actual
+┣ 📂 src/
+┃ ┗ 📂 main/
+┃   ┗ 📂 java/                 
+┃     ┣ 📂 config/             # Conexión a la base de datos (DatabaseConnection)
+┃     ┣ 📂 dao/                # Interfaces genéricas y DAOs concretos (EmpleadoDao, LegajoDao)
+┃     ┣ 📂 entities/           # Clases Empleado y Legajo
+┃     ┣ 📂 service/            # Lógica de negocio y manejo de transacciones
+┃     ┗ 📂 main/               # Clase principal y menú de consola (AppMenu)
+┣ 📂 sql/
+┃ ┗ 📂 Scripts/
+┃   ┣ 📄 create_database.sql    # Script de creación de la base y tablas
+┃   ┗ 📄 insert_data.sql        # Script con datos de prueba
+┣ 📂 lib/                       # Librerías externas (.jar) agregadas al proyecto desde NetBeans
+┣ 📂 img/
+┃ ┗ 📄 UML_Empleado_Legajo.png  # Imagen del Diagrama UML del dominio Empleado-Legajo
+┣ 📂 docs/
+┃ ┣ 📄 Informe_TFI_Grupo10.pdf  # Informe final con análisis y conclusiones
+┃ ┗ 📄 Diagrama_TFI_Grupo10.uxf # Diagrama UML para importar en UMLetino
+┣ 📄 config.properties          # Configuración de conexión MySQL (usuario, contraseña, URL)
+┣ 📄 .gitignore                 # Exclusiones de archivos y carpetas
+┗ 📄 README.md                  # Archivo actual
+
 ```
 
 ---
