@@ -2,6 +2,9 @@
 
 **Trabajo Final Integrador de Programación 2 - UTN**
 
+**Link al video explicativo:** https://youtu.be/tlba6bTBGB0
+
+**Link secundario:** https://drive.google.com/file/d/1tR6CAjF2fkM8lgNX4Pv6hndnKGzz3X3H/view?usp=sharing 
 ---
 
 ## Integrantes del Equipo
